@@ -565,6 +565,15 @@ export const UMKM_MOCK: UMKMDashboardData = {
       reach: '1,2 jt',
       time: '1 hari lalu',
     },
+    {
+      title: 'Perluasan akses pembiayaan KUR untuk wirausaha muda',
+      context: 'Rapat koordinasi perbankan',
+      source: 'Bisnis Indonesia',
+      tone: 'pos',
+      toneLabel: 'Positif',
+      reach: '1,9 jt',
+      time: '1 hari lalu',
+    },
   ],
   quotes: [
     {

@@ -158,42 +158,62 @@ function RibbonStack({
   );
 }
 
-/** 3. Feed & News Carousel — TV 10-foot font scale */
+/** 3. Feed & News Carousel — TV 10-foot font scale, 3 items per page number */
 function FeedCarousel({ data }: { data: UMKMDashboardData }) {
   const [mode, setMode] = useState<'news' | 'social'>('news');
+  const [page, setPage] = useState(0);
   const [progress, setProgress] = useState(0);
 
+  const items = useMemo(() => {
+    return mode === 'news' ? data.ministerNews : data.posts;
+  }, [mode, data.ministerNews, data.posts]);
+
+  const totalPages = Math.max(1, Math.ceil(items.length / 3));
+
+  // Reset page when mode changes
+  useEffect(() => {
+    setPage(0);
+  }, [mode]);
+
+  // Auto-rotate pages every 8 seconds
   useEffect(() => {
     setProgress(0);
     const tick = 100;
-    const steps = FEED_INTERVAL_MS / tick;
+    const intervalMs = 8000;
+    const steps = intervalMs / tick;
     let step = 0;
+
     const id = setInterval(() => {
       step += 1;
       setProgress((step / steps) * 100);
       if (step >= steps) {
         step = 0;
-        setMode((m) => (m === 'news' ? 'social' : 'news'));
+        setPage((p) => (p + 1) % totalPages);
       }
     }, tick);
-    return () => clearInterval(id);
-  }, [mode]);
 
-  const newsItems = data.ministerNews.slice(0, 3);
-  const socialItems = data.posts.slice(0, 3);
+    return () => clearInterval(id);
+  }, [mode, totalPages, page]);
+
+  // Get exact 3 items for current page
+  const currentItems = useMemo(() => {
+    const start = page * 3;
+    return items.slice(start, start + 3);
+  }, [items, page]);
 
   return (
     <BentoCard
       title={mode === 'news' ? 'Pemberitaan Terkait Menteri' : 'Monitoring Media Sosial'}
       action={
         <div className="flex items-center gap-2">
+          {/* Mode Switcher */}
           <div className="flex rounded-full border p-0.5 gap-0.5 bg-slate-100 border-slate-200">
             {(['news', 'social'] as const).map((key) => (
               <button
                 key={key}
                 type="button"
                 onClick={() => setMode(key)}
-                className="px-3 py-1 rounded-full text-xs font-bold transition-colors"
+                className="px-2.5 py-0.5 rounded-full text-xs font-bold transition-colors"
                 style={
                   mode === key
                     ? { background: 'var(--ink)', color: '#fff' }
@@ -204,15 +224,40 @@ function FeedCarousel({ data }: { data: UMKMDashboardData }) {
               </button>
             ))}
           </div>
-          <SEPill tone="live">10s</SEPill>
+
+          {/* Page Number Buttons (1, 2...) — Displaying 3 data per page */}
+          <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-full px-2 py-0.5">
+            <span className="text-[10px] font-bold text-slate-500 mr-0.5">Hal</span>
+            {Array.from({ length: totalPages }).map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => {
+                  setPage(idx);
+                  setProgress(0);
+                }}
+                className={cn(
+                  'w-4 h-4 rounded-full text-[10px] font-extrabold flex items-center justify-center transition-all',
+                  page === idx
+                    ? 'bg-emerald-600 text-white shadow-xs scale-110'
+                    : 'text-slate-600 hover:bg-slate-200',
+                )}
+              >
+                {idx + 1}
+              </button>
+            ))}
+          </div>
+
+          <SEPill tone="live">Live</SEPill>
         </div>
       }
     >
       <div className="relative h-full min-h-0 flex flex-col overflow-hidden">
-        <div className="h-px rounded-full overflow-hidden mb-2 shrink-0 bg-slate-100">
+        {/* Progress Bar */}
+        <div className="h-1 rounded-full overflow-hidden mb-2 shrink-0 bg-slate-100">
           <motion.div
-            className="h-full rounded-full"
-            style={{ background: 'linear-gradient(90deg, #0b192c, #1f3b57)', width: `${progress}%` }}
+            className="h-full rounded-full bg-emerald-500"
+            style={{ width: `${progress}%` }}
             transition={{ duration: 0.1, ease: 'linear' }}
           />
         </div>
@@ -221,14 +266,14 @@ function FeedCarousel({ data }: { data: UMKMDashboardData }) {
           <AnimatePresence mode="wait">
             {mode === 'news' ? (
               <motion.div
-                key="news"
+                key={`news-page-${page}`}
                 className="absolute inset-0 flex flex-col gap-2 overflow-hidden"
-                initial={{ opacity: 0, x: 16 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -16 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
               >
-                {newsItems.map((n) => (
+                {(currentItems as typeof data.ministerNews).map((n) => (
                   <div
                     key={n.title}
                     className="flex-1 min-h-0 grid grid-cols-[minmax(0,1fr)_auto_auto] gap-3 items-center rounded-xl border px-4 py-2 overflow-hidden shadow-2xs"
@@ -243,14 +288,14 @@ function FeedCarousel({ data }: { data: UMKMDashboardData }) {
                       <b className="block text-xs xl:text-sm font-bold text-slate-900 truncate leading-tight">
                         {n.title}
                       </b>
-                      <span className="block text-sm font-normal text-slate-500 mt-0.5 truncate">
+                      <span className="block text-xs font-normal text-slate-500 mt-0.5 truncate">
                         {n.source} · {n.time}
                       </span>
                     </div>
-                    <span className="text-lg font-extrabold tabular-nums shrink-0 text-slate-800">
+                    <span className="text-base xl:text-lg font-extrabold tabular-nums shrink-0 text-slate-800">
                       {n.reach}
                     </span>
-                    <span className="text-sm font-extrabold min-w-[4rem] text-right shrink-0" style={{ color: TONE_COLOR[n.tone] }}>
+                    <span className="text-xs xl:text-sm font-extrabold min-w-[4rem] text-right shrink-0" style={{ color: TONE_COLOR[n.tone] }}>
                       {n.toneLabel}
                     </span>
                   </div>
@@ -258,20 +303,20 @@ function FeedCarousel({ data }: { data: UMKMDashboardData }) {
               </motion.div>
             ) : (
               <motion.div
-                key="social"
+                key={`social-page-${page}`}
                 className="absolute inset-0 flex flex-col gap-2 overflow-hidden"
-                initial={{ opacity: 0, x: 16 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -16 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
               >
-                {socialItems.map((p) => (
+                {(currentItems as typeof data.posts).map((p) => (
                   <div
                     key={p.id}
-                    className="flex-1 min-h-0 grid grid-cols-[50px_minmax(0,1fr)_auto] gap-3 items-center rounded-xl border px-4 py-2 overflow-hidden shadow-2xs bg-white border-slate-200"
+                    className="flex-1 min-h-0 grid grid-cols-[45px_minmax(0,1fr)_auto] gap-3 items-center rounded-xl border px-4 py-2 overflow-hidden shadow-2xs bg-white border-slate-200"
                   >
                     <span
-                      className="text-xs font-black text-white text-center rounded-lg py-2 shrink-0"
+                      className="text-xs font-black text-white text-center rounded-lg py-1.5 shrink-0"
                       style={{ background: '#152943' }}
                     >
                       {PLATFORM_SHORT[p.platform] ?? '·'}
@@ -280,13 +325,13 @@ function FeedCarousel({ data }: { data: UMKMDashboardData }) {
                       <b className="block text-xs xl:text-sm font-bold text-slate-900 truncate leading-tight">
                         {p.handle}
                       </b>
-                      <span className="block text-sm font-normal leading-snug line-clamp-1 mt-0.5 text-slate-600">
+                      <span className="block text-xs font-normal leading-snug line-clamp-1 mt-0.5 text-slate-600">
                         {p.excerpt}
                       </span>
                     </div>
                     <div className="text-right shrink-0 overflow-hidden">
                       <span
-                        className="block text-sm font-extrabold"
+                        className="block text-xs xl:text-sm font-extrabold"
                         style={{
                           color: p.toneLabel.includes('Neg')
                             ? 'var(--neg)'
