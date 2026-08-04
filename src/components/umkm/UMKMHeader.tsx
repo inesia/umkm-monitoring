@@ -1,9 +1,11 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { BRAND } from '@/lib/constants';
 import type { UMKMView } from '@/types/umkm';
 import { cn } from '@/lib/utils';
+import { Maximize, Minimize } from 'lucide-react';
 
 const VIEWS: { id: UMKMView; label: string; badge?: number }[] = [
   { id: 'menteri', label: 'Menteri' },
@@ -43,6 +45,24 @@ export function UMKMHeader({
   kiosk = false,
   syncStatus,
 }: UMKMHeaderProps) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
+
   const syncLabel = syncStatus?.error
     ? 'Sync error'
     : syncStatus?.loading
@@ -184,6 +204,20 @@ export function UMKMHeader({
             {syncLabel}
           </button>
         )}
+
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          className="flex items-center justify-center p-2 rounded-lg border text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 transition-all shrink-0 cursor-pointer shadow-xs"
+          style={{ borderColor: 'var(--line)' }}
+          title={isFullscreen ? 'Keluar Layar Penuh (ESC)' : 'Layar Penuh (Full Screen)'}
+        >
+          {isFullscreen ? (
+            <Minimize className="w-4 h-4" />
+          ) : (
+            <Maximize className="w-4 h-4" />
+          )}
+        </button>
 
         <div className="text-right shrink-0 leading-tight min-w-[7rem]">
           <div className="text-base font-bold tabular-nums" style={{ color: 'var(--ink)' }}>
