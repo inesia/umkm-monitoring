@@ -1,10 +1,12 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { UMKMDashboardData, UMKMKPI } from '@/types/umkm';
 import { SEPill, SEStatus } from '../UMKMCard';
-import { Sparkles, ShieldAlert, Timer, TrendingUp, Radio } from 'lucide-react';
+import { Sparkles, ShieldAlert, Timer, TrendingUp, Radio, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { EscalationPanel } from '../EscalationPanel';
 
 const SEV_COLOR = {
   high: 'var(--neg)',
@@ -67,7 +69,13 @@ function BentoCard({
 }
 
 /** Rich Executive Crisis KPI Ribbon with Micro Graphics (Zero Wasted Whitespace) */
-function KrisisKPIRibbon({ kpis }: { kpis: UMKMKPI[] }) {
+function KrisisKPIRibbon({
+  kpis,
+  onOpenEscalation,
+}: {
+  kpis: UMKMKPI[];
+  onOpenEscalation?: () => void;
+}) {
   const kpiMap = useMemo(() => {
     return Object.fromEntries((kpis || []).map((k) => [k.id, k]));
   }, [kpis]);
@@ -148,9 +156,15 @@ function KrisisKPIRibbon({ kpis }: { kpis: UMKMKPI[] }) {
               {kpiSla?.label ?? 'SLA Respon Kritis'}
             </span>
           </div>
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-extrabold bg-rose-100 text-rose-800 border border-rose-300/80 shrink-0 leading-none">
-            SLA &lt; 2H
-          </span>
+          <button
+            type="button"
+            onClick={onOpenEscalation}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-extrabold bg-rose-600 hover:bg-rose-700 text-white shadow-xs shrink-0 cursor-pointer animate-pulse"
+            title="Klik untuk membuka Protokol & Action Eskalasi Kritis"
+          >
+            <ShieldAlert className="w-3.5 h-3.5 fill-current" />
+            <span>BUKA ESKALASI</span>
+          </button>
         </div>
 
         <div className="my-0.5 flex flex-col justify-center min-w-0 flex-1">
@@ -271,11 +285,16 @@ export function KrisisView({
   data: UMKMDashboardData;
   onAskAI?: (prompt: string) => void;
 }) {
+  const [showEscalationModal, setShowEscalationModal] = useState(false);
+
   return (
     <div className="umkm-krisis w-full h-full min-h-0">
       {/* 1. Top Crisis Executive KPI Ribbon */}
       <div className="area-kpi">
-        <KrisisKPIRibbon kpis={data.crisisKpis} />
+        <KrisisKPIRibbon
+          kpis={data.crisisKpis}
+          onOpenEscalation={() => setShowEscalationModal(true)}
+        />
       </div>
 
       {/* 2. Papan Isu — Semua Isu Aktif (8 Columns) */}
@@ -286,19 +305,19 @@ export function KrisisView({
           action={<SEPill tone="live">Live</SEPill>}
         >
           <div className="flex flex-col h-full min-h-0 overflow-hidden gap-1.5">
-            <div className="shrink-0 grid grid-cols-[minmax(0,2.4fr)_1fr_1fr_0.8fr_1fr_0.8fr] gap-2 px-3 py-1.5 rounded-xl bg-slate-100 text-xs xl:text-sm font-heading font-bold uppercase tracking-wider text-slate-500">
+            <div className="shrink-0 grid grid-cols-[minmax(0,2.4fr)_1fr_1fr_0.8fr_1fr_1.1fr] gap-2 px-3 py-1.5 rounded-xl bg-slate-100 text-xs xl:text-sm font-heading font-bold uppercase tracking-wider text-slate-500">
               <span>Isu / Program</span>
               <span>Kanal</span>
               <span>Mentions</span>
               <span>SLA</span>
               <span>PIC</span>
-              <span className="text-center">Status</span>
+              <span className="text-center">Status / Aksi</span>
             </div>
             <div className="flex-1 min-h-0 flex flex-col gap-1 overflow-hidden">
-              {data.crisisIssues.slice(0, 6).map((issue) => (
+              {data.crisisIssues.slice(0, 6).map((issue, idx) => (
                 <div
                   key={issue.title}
-                  className="shrink-0 grid grid-cols-[minmax(0,2.4fr)_1fr_1fr_0.8fr_1fr_0.8fr] gap-2 items-center rounded-xl border border-slate-200/80 bg-slate-50/60 px-3 py-1 overflow-hidden"
+                  className="shrink-0 grid grid-cols-[minmax(0,2.4fr)_1fr_1fr_0.8fr_1fr_1.1fr] gap-2 items-center rounded-xl border border-slate-200/80 bg-slate-50/60 px-3 py-1 overflow-hidden"
                   style={{
                     borderLeftWidth: 4,
                     borderLeftColor: SEV_COLOR[issue.severity],
@@ -327,8 +346,20 @@ export function KrisisView({
                   <span className="text-xs xl:text-sm text-slate-700 font-medium truncate">
                     {issue.pic}
                   </span>
-                  <div className="text-center">
-                    <SEStatus label={issue.status} tone={issue.statusTone} />
+                  <div className="text-center flex items-center justify-center">
+                    {idx === 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowEscalationModal(true)}
+                        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] xl:text-xs font-extrabold text-white bg-rose-600 hover:bg-rose-700 transition-all shadow-xs shrink-0 cursor-pointer animate-pulse"
+                        title="Klik untuk membuka Protokol & Action Eskalasi Kritis"
+                      >
+                        <ShieldAlert className="w-3 h-3 fill-current" />
+                        <span>BUKA ESKALASI</span>
+                      </button>
+                    ) : (
+                      <SEStatus label={issue.status} tone={issue.statusTone} />
+                    )}
                   </div>
                 </div>
               ))}
@@ -484,6 +515,47 @@ export function KrisisView({
           </div>
         </BentoCard>
       </div>
+
+      {/* Escalation Modal Dialog */}
+      <AnimatePresence>
+        {showEscalationModal && (
+          <motion.div
+            className="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 select-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowEscalationModal(false)}
+          >
+            <motion.div
+              className="relative w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-2xl p-4 overflow-hidden flex flex-col max-h-[90vh]"
+              initial={{ scale: 0.94, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.94, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setShowEscalationModal(false)}
+                className="absolute top-3 right-3 z-30 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+                title="Tutup Modal Eskalasi"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="flex-1 min-h-0 overflow-y-auto">
+                <EscalationPanel
+                  data={data.escalation}
+                  variant="krisis"
+                  onAskAI={(prompt) => {
+                    setShowEscalationModal(false);
+                    onAskAI?.(prompt);
+                  }}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

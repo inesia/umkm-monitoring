@@ -70,9 +70,31 @@ function svgToStagePercent(
 }
 
 /** Callout opens away from the anchor — opposite side of the map edge */
-function getCalloutClasses(left: number, top: number) {
-  const vertical = top >= 52 ? 'is-above' : 'is-below';
-  const horizontal = left <= 28 ? 'is-right' : left >= 68 ? 'is-left' : 'is-center';
+function getCalloutClasses(left: number, top: number, name?: string) {
+  let vertical = top >= 52 ? 'is-above' : 'is-below';
+  let horizontal = left <= 28 ? 'is-right' : left >= 68 ? 'is-left' : 'is-center';
+
+  if (name) {
+    const n = name.toLowerCase();
+    // 1. DKI, Jabar, Jateng, Jatim, dan Bali: posisinya di atas titik (is-above)
+    if (
+      n.includes('dki') ||
+      n.includes('jakarta') ||
+      n.includes('jawa') ||
+      n.includes('jabar') ||
+      n.includes('jateng') ||
+      n.includes('jatim') ||
+      n.includes('bali')
+    ) {
+      vertical = 'is-above';
+    }
+
+    // 2. Papua: pindah ke kiri (is-left)
+    if (n.includes('papua')) {
+      horizontal = 'is-left';
+    }
+  }
+
   return ['map-auto-callout-anchor', vertical, horizontal];
 }
 
@@ -201,8 +223,8 @@ export function NationalIssueMap({
     };
   }, [active, mounted, layoutTick]);
 
-  const calloutClasses = calloutPos
-    ? getCalloutClasses(calloutPos.left, calloutPos.top)
+  const calloutClasses = calloutPos && active
+    ? getCalloutClasses(calloutPos.left, calloutPos.top, active.name)
     : ['map-auto-callout-anchor'];
   const sentiment = active ? SENTIMENT_META[active.sentiment] : null;
 

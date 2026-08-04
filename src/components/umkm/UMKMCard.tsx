@@ -81,18 +81,21 @@ export function SEPill({
   const styles: Record<string, { bg: string; color: string }> = {
     live: { bg: '#FFECEC', color: 'var(--neg)' },
     ok: { bg: '#E8F6EE', color: 'var(--pos)' },
-    warn: { bg: '#EBF3FA', color: 'var(--orange-deep)' },
+    warn: { bg: '#FFF4E5', color: 'var(--orange-deep)' },
     high: { bg: '#FDEAE7', color: 'var(--neg)' },
     med: { bg: '#FFF6DB', color: '#9A7A00' },
   };
   const s = styles[tone];
   return (
     <span
-      className="inline-flex items-center gap-1 text-[0.58rem] font-bold uppercase tracking-[0.06em] px-2 py-0.5 rounded-full whitespace-nowrap"
+      className="inline-flex items-center gap-1.5 text-[0.58rem] font-bold uppercase tracking-[0.06em] px-2.5 py-0.5 rounded-full whitespace-nowrap"
       style={{ background: s.bg, color: s.color }}
     >
-      {tone === 'live' && (
-        <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+      {(tone === 'live' || tone === 'high') && (
+        <span className="relative flex h-1.5 w-1.5 shrink-0">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75" />
+          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-current" />
+        </span>
       )}
       {children}
     </span>

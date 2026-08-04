@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Sparkles, ShieldAlert } from 'lucide-react';
+import { Sparkles, ShieldAlert, X } from 'lucide-react';
 import type {
   UMKMDashboardData,
   SentimentTone,
@@ -16,6 +16,7 @@ import { MediaListeningChart } from '../MediaListeningChart';
 import { TopKPIRibbon } from '../TopKPIRibbon';
 import { SEPill } from '../UMKMCard';
 import { cn } from '@/lib/utils';
+import { EscalationPanel } from '../EscalationPanel';
 
 const TONE_COLOR: Record<SentimentTone, string> = {
   pos: 'var(--pos)',
@@ -92,47 +93,59 @@ function MetricRibbon({ kpis, sources }: { kpis: UMKMKPI[]; sources: SourceTotal
   return <TopKPIRibbon kpis={kpis} sources={sources} />;
 }
 
-/** Isu Teratas — highlighted side card (width matches Profil Menteri) */
-function TopIssueHighlight({ kpis }: { kpis: UMKMKPI[] }) {
+/** Isu Teratas — highlighted side card with Escalation button */
+function TopIssueHighlight({
+  kpis,
+  onOpenEscalation,
+}: {
+  kpis: UMKMKPI[];
+  onOpenEscalation?: () => void;
+}) {
   const kpi = kpis.find((k) => k.id === 'topissue');
   const title = kpi?.value ?? 'Konflik kepentingan mitra';
   const subtitle = kpi?.delta ?? '410 rb reach • menunggu klarifikasi';
 
   return (
     <div
-      className="h-full rounded-2xl border overflow-hidden flex flex-col min-h-0 relative bg-gradient-to-br from-red-50/95 via-amber-50/50 to-red-50/80"
+      className="h-full rounded-2xl border overflow-hidden flex flex-col justify-between min-h-0 relative bg-gradient-to-br from-rose-600 via-red-600 to-rose-700 text-white shadow-md hover:shadow-lg transition-all"
       style={{
-        borderColor: '#fecaca',
-        boxShadow: 'var(--shadow-se)',
-        borderLeftWidth: 4,
-        borderLeftColor: '#ef4444',
+        borderColor: '#dc2626',
+        boxShadow: '0 8px 24px -6px rgba(225,29,72,0.4)',
       }}
       role="region"
       aria-label="Isu Teratas"
     >
-      <div className="px-3.5 pt-2.5 pb-1 shrink-0 flex items-center justify-between gap-2 min-w-0">
+      <div className="px-3.5 pt-2 pb-0.5 shrink-0 flex items-center justify-between gap-2 min-w-0">
         <div className="flex items-center gap-1.5 min-w-0">
-          <ShieldAlert className="w-3.5 h-3.5 text-red-600 shrink-0 animate-pulse" />
-          <div className="font-heading text-[11px] font-bold uppercase tracking-[0.1em] truncate text-red-700/80">
-            Isu Teratas
+          <ShieldAlert className="w-3.5 h-3.5 text-amber-300 shrink-0 animate-pulse" />
+          <div className="font-heading text-[11px] font-extrabold uppercase tracking-[0.1em] truncate text-amber-200">
+            Isu Teratas Kritis
           </div>
         </div>
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-red-600 text-white tracking-wider uppercase shrink-0 leading-none shadow-sm">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-400 text-slate-950 tracking-wider uppercase shrink-0 leading-none shadow-xs">
           High Alert
         </span>
       </div>
 
-      <div className="flex-1 min-h-0 px-3.5 pb-2.5 flex flex-col justify-center gap-1.5 overflow-hidden">
-        <h3 className="text-base xl:text-lg font-extrabold leading-tight text-red-900 line-clamp-2 tracking-tight">
+      <div className="px-3.5 flex-1 min-h-0 flex flex-col justify-center gap-0.5 overflow-hidden">
+        <h3 className="text-sm xl:text-base font-extrabold leading-tight text-white line-clamp-2 tracking-tight">
           {title}
         </h3>
-        <div className="w-full bg-red-100 rounded-full h-px overflow-hidden border border-red-200">
-          <div className="bg-gradient-to-r from-amber-500 to-red-600 h-full w-[78%]" />
-        </div>
-        <div className="text-[11px] xl:text-xs font-medium text-red-700/80 truncate flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping shrink-0" />
+        <div className="text-[10px] xl:text-[11px] font-medium text-rose-100 truncate flex items-center gap-1.5 mt-0.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-300 animate-ping shrink-0" />
           {subtitle}
         </div>
+      </div>
+
+      <div className="px-3.5 pb-2 shrink-0">
+        <button
+          type="button"
+          onClick={onOpenEscalation}
+          className="w-full flex items-center justify-center gap-1.5 rounded-xl px-3 py-1 text-xs xl:text-sm font-extrabold text-rose-950 bg-amber-300 hover:bg-amber-200 active:scale-[0.98] transition-all shadow-md cursor-pointer animate-pulse"
+        >
+          <ShieldAlert className="w-3.5 h-3.5 fill-rose-600 text-amber-300" />
+          <span>BUKA ESKALASI KRITIS</span>
+        </button>
       </div>
     </div>
   );
@@ -142,9 +155,11 @@ function TopIssueHighlight({ kpis }: { kpis: UMKMKPI[] }) {
 function RibbonStack({
   kpis,
   sources,
+  onOpenEscalation,
 }: {
   kpis: UMKMKPI[];
   sources: SourceTotal[];
+  onOpenEscalation?: () => void;
 }) {
   return (
     <div className="h-full min-h-0 grid grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[minmax(0,1fr)_290px] gap-2.5 overflow-hidden">
@@ -152,7 +167,7 @@ function RibbonStack({
         <MetricRibbon kpis={kpis} sources={sources} />
       </div>
       <div className="min-h-0 min-w-0 overflow-hidden">
-        <TopIssueHighlight kpis={kpis} />
+        <TopIssueHighlight kpis={kpis} onOpenEscalation={onOpenEscalation} />
       </div>
     </div>
   );
@@ -162,8 +177,10 @@ function RibbonStack({
 function FeedCarousel({ data }: { data: UMKMDashboardData }) {
   const [mode, setMode] = useState<'news' | 'social'>('news');
   const [progress, setProgress] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
+    if (isHovered) return;
     setProgress(0);
     const tick = 100;
     const steps = FEED_INTERVAL_MS / tick;
@@ -177,7 +194,7 @@ function FeedCarousel({ data }: { data: UMKMDashboardData }) {
       }
     }, tick);
     return () => clearInterval(id);
-  }, [mode]);
+  }, [mode, isHovered]);
 
   const newsItems = data.ministerNews.slice(0, 3);
   const socialItems = data.posts.slice(0, 3);
@@ -192,7 +209,10 @@ function FeedCarousel({ data }: { data: UMKMDashboardData }) {
               <button
                 key={key}
                 type="button"
-                onClick={() => setMode(key)}
+                onClick={() => {
+                  setMode(key);
+                  setIsHovered(true);
+                }}
                 className="px-3 py-1 rounded-full text-xs font-bold transition-colors"
                 style={
                   mode === key
@@ -204,16 +224,30 @@ function FeedCarousel({ data }: { data: UMKMDashboardData }) {
               </button>
             ))}
           </div>
-          <SEPill tone="live">10s</SEPill>
+          <SEPill tone={isHovered ? 'warn' : 'live'}>{isHovered ? '⏸ Jeda' : '10s'}</SEPill>
         </div>
       }
     >
-      <div className="relative h-full min-h-0 flex flex-col overflow-hidden">
-        <div className="h-px rounded-full overflow-hidden mb-2 shrink-0 bg-slate-100">
+      <div
+        className="relative h-full min-h-0 flex flex-col overflow-hidden"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className="h-[1px] rounded-full overflow-hidden mb-2 shrink-0 bg-slate-100">
           <motion.div
-            className="h-full rounded-full"
-            style={{ background: 'linear-gradient(90deg, #0b192c, #1f3b57)', width: `${progress}%` }}
-            transition={{ duration: 0.1, ease: 'linear' }}
+            className={cn(
+              'h-full rounded-full transition-[width] duration-100 linear',
+              !isHovered && progress >= 85 && 'animate-pulse',
+            )}
+            style={{
+              width: `${isHovered ? 100 : progress}%`,
+              background:
+                !isHovered && progress >= 85
+                  ? 'linear-gradient(90deg, #f87171, #ef4444)'
+                  : isHovered
+                    ? '#f59e0b'
+                    : 'linear-gradient(90deg, #0b192c, #1f3b57)',
+            }}
           />
         </div>
 
@@ -341,6 +375,30 @@ function TopAuthorsBento({
     { id: 'portal' as const, label: 'Portal News' },
   ];
   const [group, setGroup] = useState<(typeof groups)[number]['id']>('influential');
+  const [progress, setProgress] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Auto rotate groups every 10s unless hovered
+  useEffect(() => {
+    if (isHovered) return;
+    setProgress(0);
+    const tick = 100;
+    const intervalMs = 10000;
+    const steps = intervalMs / tick;
+    let step = 0;
+    const id = setInterval(() => {
+      step += 1;
+      setProgress((step / steps) * 100);
+      if (step >= steps) {
+        step = 0;
+        setGroup((curr) => {
+          const idx = groups.findIndex((g) => g.id === curr);
+          return groups[(idx + 1) % groups.length].id;
+        });
+      }
+    }, tick);
+    return () => clearInterval(id);
+  }, [group, isHovered]);
 
   const ranked: AuthorRank[] = useMemo(
     () => data.authors.filter((a) => a.group === group).slice(0, 7),
@@ -351,19 +409,47 @@ function TopAuthorsBento({
     <BentoCard
       title="TOP AUTHORS"
       action={
-        <span className="text-[11px] xl:text-xs font-semibold text-slate-500 whitespace-nowrap">
-          Kontributor tertinggi · 7 hari
-        </span>
+        <div className="flex items-center gap-2">
+          <SEPill tone={isHovered ? 'warn' : 'live'}>
+            {isHovered ? '⏸ Jeda' : '10s Auto'}
+          </SEPill>
+        </div>
       }
       contentClassName="px-3 pb-2.5"
     >
-      <div className="flex flex-col h-full min-h-0 overflow-hidden gap-1.5">
+      <div
+        className="flex flex-col h-full min-h-0 overflow-hidden gap-1.5"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Tab switch progress bar */}
+        <div className="h-[1px] rounded-full overflow-hidden shrink-0 bg-slate-100 mb-0.5">
+          <motion.div
+            className={cn(
+              'h-full rounded-full transition-[width] duration-100 linear',
+              !isHovered && progress >= 85 && 'animate-pulse',
+            )}
+            style={{
+              width: `${isHovered ? 100 : progress}%`,
+              background:
+                !isHovered && progress >= 85
+                  ? 'linear-gradient(90deg, #f87171, #ef4444)'
+                  : isHovered
+                    ? '#f59e0b'
+                    : 'linear-gradient(90deg, #0b192c, #1f3b57)',
+            }}
+          />
+        </div>
+
         <div className="shrink-0 flex gap-1 rounded-full p-0.5 bg-slate-100">
           {groups.map((g) => (
             <button
               key={g.id}
               type="button"
-              onClick={() => setGroup(g.id)}
+              onClick={() => {
+                setGroup(g.id);
+                setIsHovered(true);
+              }}
               className="flex-1 px-1.5 py-1 rounded-full text-[10px] xl:text-[11px] font-bold truncate transition-colors"
               style={
                 group === g.id
@@ -743,10 +829,16 @@ export function MenteriView({
   data: UMKMDashboardData;
   onAskAI?: (prompt: string) => void;
 }) {
+  const [showEscalationModal, setShowEscalationModal] = useState(false);
+
   return (
     <div className="umkm-menteri h-full min-h-0">
       <div className="area-ribbon">
-        <RibbonStack kpis={data.kpis} sources={data.sourceTotals} />
+        <RibbonStack
+          kpis={data.kpis}
+          sources={data.sourceTotals}
+          onOpenEscalation={() => setShowEscalationModal(true)}
+        />
       </div>
       <div className="area-listen">
         <ListeningBento data={data} />
@@ -765,6 +857,47 @@ export function MenteriView({
         <NationalMapBento data={data} />
         <TopAuthorsBento data={data} onAskAI={onAskAI} />
       </div>
+
+      {/* Escalation Modal Dialog Overlay */}
+      <AnimatePresence>
+        {showEscalationModal && (
+          <motion.div
+            className="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 select-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowEscalationModal(false)}
+          >
+            <motion.div
+              className="relative w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-2xl p-4 overflow-hidden flex flex-col max-h-[90vh]"
+              initial={{ scale: 0.94, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.94, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setShowEscalationModal(false)}
+                className="absolute top-3 right-3 z-30 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+                title="Tutup Modal Eskalasi"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="flex-1 min-h-0 overflow-y-auto">
+                <EscalationPanel
+                  data={data.escalation}
+                  variant="krisis"
+                  onAskAI={(prompt) => {
+                    setShowEscalationModal(false);
+                    onAskAI?.(prompt);
+                  }}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

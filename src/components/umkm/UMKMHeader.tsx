@@ -21,6 +21,7 @@ type UMKMHeaderProps = {
   currentTime: string;
   currentDate: string;
   autoRotate?: boolean;
+  onAutoRotateToggle?: () => void;
   kiosk?: boolean;
   syncStatus?: {
     loading: boolean;
@@ -38,6 +39,7 @@ export function UMKMHeader({
   currentTime,
   currentDate,
   autoRotate = false,
+  onAutoRotateToggle,
   kiosk = false,
   syncStatus,
 }: UMKMHeaderProps) {
@@ -189,11 +191,6 @@ export function UMKMHeader({
           </div>
           <div className="text-[0.62rem] font-semibold" style={{ color: 'var(--ink-3)' }}>
             {currentDate}
-            {autoRotate && (
-              <span className="ml-2 uppercase tracking-wider" style={{ color: 'var(--orange-deep)' }}>
-                · Auto
-              </span>
-            )}
           </div>
         </div>
       </div>

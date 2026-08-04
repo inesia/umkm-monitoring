@@ -172,10 +172,10 @@ function FlipTile({
               <button
                 type="button"
                 onClick={onWarRoom}
-                className="flex-1 flex items-center justify-center gap-1 rounded-md px-1.5 py-1 text-[0.52rem] font-bold text-white"
-                style={{ background: 'var(--ink)' }}
+                className="flex-1 flex items-center justify-center gap-1 rounded-md px-1.5 py-1 text-[0.52rem] font-bold text-white shadow-xs cursor-pointer hover:bg-rose-700 transition-colors"
+                style={{ background: '#dc2626' }}
               >
-                <Zap className="w-2.5 h-2.5" /> War Room
+                <Zap className="w-2.5 h-2.5 fill-current" /> War Room
               </button>
               <button
                 type="button"
@@ -338,10 +338,10 @@ export function EscalationPanel({
               <button
                 type="button"
                 onClick={warRoomClick}
-                className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[0.52rem] font-bold text-white"
-                style={{ background: 'var(--ink)' }}
+                className="flex items-center gap-1 rounded-md px-2 py-0.5 text-[0.55rem] font-extrabold text-white shadow-xs cursor-pointer hover:bg-rose-700 transition-colors animate-pulse"
+                style={{ background: '#dc2626' }}
               >
-                <Zap className="w-2.5 h-2.5" /> {warRoomLabel}
+                <Zap className="w-2.5 h-2.5 fill-current" /> {warRoomLabel}
               </button>
               <button
                 type="button"
