@@ -1,27 +1,35 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, TrendingUp, Radio, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, TrendingUp, Radio, ShieldAlert, Newspaper, Instagram, Youtube } from 'lucide-react';
 import type { SourceTotal, UMKMKPI } from '@/types/umkm';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const SOURCE_ROLL_MS = 4500;
 
 const SOURCE_META: Record<string, { short: string; kindLabel: string; bg: string }> = {
-  'X / Tweets': { short: 'X', kindLabel: 'Tweets', bg: '#1d9bf0' },
+  'X / Tweets': { short: 'X', kindLabel: 'Tweets', bg: '#000000' },
   Instagram: {
     short: 'IG',
     kindLabel: 'Posts',
-    bg: 'radial-gradient(circle at 30% 110%, #ffdb73, #fcaf45 20%, #f56040 45%, #d6249f 65%, #833ab4 90%)',
+    bg: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
   },
-  Facebook: { short: 'FB', kindLabel: 'Posts', bg: '#3b5998' },
-  TikTok: { short: 'TT', kindLabel: 'Posts', bg: '#111111' },
+  Facebook: { short: 'FB', kindLabel: 'Posts', bg: '#1877f2' },
+  TikTok: { short: 'TT', kindLabel: 'Posts', bg: '#0f172a' },
   YouTube: { short: 'YT', kindLabel: 'Posts', bg: '#ff0000' },
   Threads: { short: 'TH', kindLabel: 'Posts', bg: '#000000' },
-  'Online News': { short: 'News', kindLabel: 'Articles', bg: '#6b7280' },
+  'Online News': { short: 'News', kindLabel: 'Articles', bg: '#475569' },
 };
 
 function sourceMeta(label: string) {
+  const l = label.toLowerCase();
+  if (l.includes('news')) return SOURCE_META['Online News'];
+  if (l.includes('tiktok')) return SOURCE_META['TikTok'];
+  if (l.includes('twitter') || l.includes('tweets') || l.includes('x')) return SOURCE_META['X / Tweets'];
+  if (l.includes('instagram')) return SOURCE_META['Instagram'];
+  if (l.includes('facebook')) return SOURCE_META['Facebook'];
+  if (l.includes('youtube')) return SOURCE_META['YouTube'];
+  if (l.includes('threads')) return SOURCE_META['Threads'];
   return (
     SOURCE_META[label] ?? {
       short: label.slice(0, 2).toUpperCase(),
@@ -29,6 +37,48 @@ function sourceMeta(label: string) {
       bg: '#152943',
     }
   );
+}
+
+function PlatformLogo({ label }: { label: string }) {
+  const l = label.toLowerCase();
+  if (l.includes('news')) {
+    return <Newspaper className="w-4 h-4 text-white shrink-0" />;
+  }
+  if (l.includes('tiktok')) {
+    return (
+      <svg className="w-4 h-4 text-white fill-current shrink-0" viewBox="0 0 24 24">
+        <path d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 1 1-2.042-2.784v-3.56a6.438 6.438 0 1 0 5.487 6.344V9.61a8.214 8.214 0 0 0 4.77 1.522V7.687a4.847 4.847 0 0 1-1.005-1.001z" />
+      </svg>
+    );
+  }
+  if (l.includes('twitter') || l.includes('tweets') || l.includes('x')) {
+    return (
+      <svg className="w-3.5 h-3.5 text-white fill-current shrink-0" viewBox="0 0 24 24">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+      </svg>
+    );
+  }
+  if (l.includes('facebook')) {
+    return (
+      <svg className="w-4 h-4 text-white fill-current shrink-0" viewBox="0 0 24 24">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </svg>
+    );
+  }
+  if (l.includes('instagram')) {
+    return <Instagram className="w-4 h-4 text-white shrink-0" />;
+  }
+  if (l.includes('youtube')) {
+    return <Youtube className="w-4 h-4 text-white shrink-0" />;
+  }
+  if (l.includes('threads')) {
+    return (
+      <svg className="w-4 h-4 text-white fill-current shrink-0" viewBox="0 0 24 24">
+        <path d="M12 21.75c-5.385 0-9.75-4.365-9.75-9.75S6.615 2.25 12 2.25s9.75 4.365 9.75 9.75c0 3.39-1.745 6.368-4.407 8.089-.356.23-.83.118-1.042-.25-.212-.368-.088-.84.269-1.05A8.22 8.22 0 0 0 20.25 12c0-4.556-3.694-8.25-8.25-8.25S3.75 7.444 3.75 12s3.694 8.25 8.25 8.25c2.186 0 4.18-.847 5.672-2.235.334-.31.861-.295 1.173.037.31.332.293.861-.039 1.171A9.704 9.704 0 0 1 12 21.75z" />
+      </svg>
+    );
+  }
+  return <Newspaper className="w-4 h-4 text-white shrink-0" />;
 }
 
 export interface TopKPIRibbonData {
@@ -381,29 +431,27 @@ export function TopKPIRibbon({ data, kpis, sources, className = '' }: TopKPIRibb
         </div>
       </div>
 
-      {/* ---------------- COLUMN 4: POST PER SUMBER (Displays 3 Data Items at Once) ---------------- */}
+      {/* ---------------- COLUMN 4: POST PER SUMBER (3 Horizontal Cards Side-by-Side) ---------------- */}
       {sources && sources.length > 0 ? (
-        <div className="px-3.5 py-2 flex flex-col justify-between min-w-0 relative overflow-hidden bg-white select-none">
+        <div className="px-3 py-2 flex flex-col justify-between min-w-0 relative overflow-hidden bg-white select-none">
           <div className="flex items-center justify-between gap-1.5 min-w-0 shrink-0">
-            <span className="text-[11px] xl:text-xs uppercase font-bold tracking-wider text-slate-500 font-heading truncate leading-none">
+            <span className="text-[11px] xl:text-xs uppercase font-medium tracking-wider text-slate-500 font-heading truncate leading-none">
               Post per Sumber
             </span>
             <span className="text-[10px] font-bold tabular-nums text-slate-400 shrink-0">
-              {srcTotal <= 3
-                ? `${srcTotal} Sumber`
-                : `${srcIndex + 1}-${((srcIndex + 2) % srcTotal) + 1}/${srcTotal}`}
+              {srcTotal <= 3 ? `${srcTotal}/${srcTotal}` : `${((srcIndex + 2) % srcTotal) + 1}/${srcTotal}`}
             </span>
           </div>
 
-          <div className="my-0.5 min-w-0 flex-1 flex flex-col justify-between gap-0.5 overflow-hidden relative">
+          <div className="my-0.5 min-w-0 flex-1 flex items-center relative overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
                 key={srcIndex}
-                className="flex flex-col justify-between h-full w-full gap-0.5"
-                initial={{ opacity: 0, y: 6 }}
+                className="grid grid-cols-3 gap-2.5 w-full items-center min-w-0"
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               >
                 {(sources.length <= 3
                   ? sources
@@ -414,25 +462,31 @@ export function TopKPIRibbon({ data, kpis, sources, className = '' }: TopKPIRibb
                     ]
                 ).map((src) => {
                   const meta = sourceMeta(src.label);
+                  const kind =
+                    src.kind === 'tweets'
+                      ? 'Tweets'
+                      : src.kind === 'articles'
+                        ? 'Articles'
+                        : meta.kindLabel ?? 'Posts';
                   return (
                     <div
                       key={src.label}
-                      className="flex items-center justify-between gap-2 min-w-0 py-0.5 border-b border-slate-100 last:border-b-0"
+                      className="flex items-center gap-2 min-w-0 overflow-hidden"
                     >
-                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                        <span
-                          className="w-5 h-5 rounded flex items-center justify-center text-[9px] font-bold text-white shrink-0 shadow-2xs"
-                          style={{ background: meta.bg }}
-                        >
-                          {meta.short}
-                        </span>
-                        <span className="text-xs font-semibold text-slate-700 truncate leading-none">
-                          {src.label}
+                      <span
+                        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-2xs"
+                        style={{ background: meta.bg }}
+                      >
+                        <PlatformLogo label={src.label} />
+                      </span>
+                      <div className="min-w-0 overflow-hidden flex-1">
+                        <b className="block text-base xl:text-lg 2xl:text-xl font-bold font-koho text-slate-900 tabular-nums leading-none truncate">
+                          {src.value}
+                        </b>
+                        <span className="block text-[10px] xl:text-[11px] font-semibold text-slate-500 truncate mt-0.5">
+                          {src.label} · {kind}
                         </span>
                       </div>
-                      <b className="text-xs xl:text-sm font-bold font-koho text-slate-900 tabular-nums shrink-0 leading-none">
-                        {src.value}
-                      </b>
                     </div>
                   );
                 })}
