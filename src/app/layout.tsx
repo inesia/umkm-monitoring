@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
-import { Instrument_Sans } from "next/font/google";
+import { KoHo, Ubuntu } from "next/font/google";
 import "./globals.css";
 
-const instrumentSans = Instrument_Sans({
+const ubuntu = Ubuntu({
   subsets: ["latin"],
-  variable: "--font-instrument",
+  variable: "--font-ubuntu",
+  weight: ["300", "400", "500", "700"],
+  display: "swap",
+});
+
+const koHo = KoHo({
+  subsets: ["latin"],
+  variable: "--font-koho",
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Sensus Ekonomi 2026 — Engagement Center",
+  title: "Kementerian UMKM — Engagement Center",
   description:
-    "Real-time media listening & engagement dashboard for Sensus Ekonomi 2026",
+    "Real-time media listening & engagement dashboard for Kementerian UMKM",
 };
 
 export default function RootLayout({
@@ -21,11 +28,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" data-theme="light">
-      <body
-        className={`${instrumentSans.variable} antialiased`}
-        suppressHydrationWarning
-      >
+    <html
+      lang="id"
+      data-theme="light"
+      className={`${ubuntu.variable} ${koHo.variable}`}
+    >
+      <body className="font-sans antialiased" suppressHydrationWarning>
         {children}
       </body>
     </html>

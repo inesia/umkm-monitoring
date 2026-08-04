@@ -31,7 +31,7 @@ function formatSla(seconds: number) {
 function buildWaMessage(issue: EscalationIssue, extra?: string) {
   const active = issue.levels.find((l) => l.state === 'active');
   const lines = [
-    `[SE Copilot] Assign isu ${issue.id}`,
+    `[Engagement Copilot] Assign isu ${issue.id}`,
     issue.title,
     `Level: ${active?.label ?? 'L2'} · ${active?.name ?? 'Tim Humas'}`,
     `SLA sisa: ~${formatSla(issue.slaSeconds)}`,
@@ -60,34 +60,34 @@ function buildReplies(issue: EscalationIssue): {
   return [
     {
       keys: ['assign', 'tugaskan', 'whatsapp', 'wa official', 'wa desk', 'blast wa'],
-      html: `<b>Assign ke WhatsApp Official</b><br/><br/>Isu <b>${issue.id}</b> siap ditugaskan ke <b>WA Desk UMKM</b> (${WA_OFFICIAL_NUMBER}).<br/><br/><b>Target:</b> ${active?.label ?? 'L2'} · ${active?.name ?? 'Tim Humas'} (${active?.assignee ?? 'on-call'})<br/><b>Kanal:</b> WA Official · blast / 1:1 desk<br/><b>SLA:</b> ~${sla}<br/><br/><b>Draft pesan WA:</b><br/>“Halo Desk — mohon handle ${issue.id}. Klarifikasi: data UMKM bukan untuk pajak (UU 16/1997). Prioritas segmen UMKM Jabodetabek & Sumut.”<br/><br/>Ketuk tombol di bawah untuk buka WhatsApp atau konfirmasi assign.`,
+      html: `<b>Assign ke WhatsApp Official</b><br/><br/>Isu <b>${issue.id}</b> siap ditugaskan ke <b>WA Desk UMKM</b> (${WA_OFFICIAL_NUMBER}).<br/><br/><b>Target:</b> ${active?.label ?? 'L2'} · ${active?.name ?? 'Tim Humas'} (${active?.assignee ?? 'on-call'})<br/><b>Kanal:</b> WA Official · blast / 1:1 desk<br/><b>SLA:</b> ~${sla}<br/><br/><b>Draft pesan WA:</b><br/>“Halo Desk — mohon handle ${issue.id}. Klarifikasi hoaks KUR cicilan ganda. Prioritas debitur terdampak & amplifier TikTok/X.”<br/><br/>Ketuk tombol di bawah untuk buka WhatsApp atau konfirmasi assign.`,
       actions: waActions,
     },
     {
-      keys: ['ringkasan', 'summary', 'eksekutif', 'situasi'],
+      keys: ['ringkasan', 'summary', 'eksekutif', 'situasi', 'briefing'],
       html: `<b>Ringkasan situasi live</b><br/><br/><b>Isu aktif:</b> ${issue.id} — ${issue.title}<br/><br/>${issue.description}<br/><br/><b>Level berjalan:</b> ${active?.label ?? '—'} · ${active?.name ?? '—'} (${active?.status ?? '—'})<br/><b>Sisa SLA:</b> ~${sla}<br/><b>Severity:</b> ${issue.severity}<br/><br/>Mau rekomendasi respons, assign ke WhatsApp, atau draft klarifikasi?`,
       actions: [{ id: 'assign-wa', label: 'Assign ke WhatsApp', kind: 'assign-wa' }],
     },
     {
       keys: ['eskalasi', 'rekomendasi', 'l3', 'level 3', 'respon', 'respons'],
-      html: `<b>Rekomendasi respons — ${issue.id}</b><br/><br/><b>Posisi:</b> ${active?.label ?? 'L2'} berjalan · sisa SLA ~${sla}.<br/><br/><b>Saran 3 langkah (simulasi):</b><br/>1) Setujui blast WA klarifikasi ke segmen UMKM terdampak (prioritas Jabodetabek & Sumut).<br/>2) Siapkan stitch/reply di kanal sumber sebelum takedown selesai.<br/>3) Tahan eskalasi L3 60–90 menit; eskalasi otomatis jika velocity negatif tidak turun ≥30% saat SLA berakhir.<br/><br/><b>Draft respons singkat:</b><br/>“Data UMKM dilindungi UU 16/1997, tidak untuk pajak/audit. Verifikasi petugas via WA Official UMKM. Terapkan Tiga TIR.”<br/><br/>Assign ke WA Desk sekarang?`,
+      html: `<b>Rekomendasi respons — ${issue.id}</b><br/><br/><b>Posisi:</b> ${active?.label ?? 'L2'} berjalan · sisa SLA ~${sla}.<br/><br/><b>Saran 3 langkah (simulasi):</b><br/>1) Setujui blast WA klarifikasi ke segmen debitur KUR terdampak.<br/>2) Siapkan stitch/reply di kanal sumber sebelum takedown selesai.<br/>3) Tahan eskalasi L3 60–90 menit; eskalasi otomatis jika velocity negatif tidak turun ≥30% saat SLA berakhir.<br/><br/><b>Draft respons singkat:</b><br/>“Hoaks cicilan ganda KUR dibantah. Gunakan kanal resmi KUR / Sapa UMKM. Laporkan phishing & petugas palsu ke WA Official.”<br/><br/>Assign ke WA Desk sekarang?`,
       actions: waActions,
     },
     {
       keys: ['draft', 'klarifikasi', 'rilis', 'pernyataan', 'jawaban'],
-      html: `<b>Draft jawaban/klarifikasi (siap edit)</b><br/><br/><b>Judul:</b> Data Sensus Ekonomi 2026 Dijamin Kerahasiaannya — Bukan untuk Pajak<br/><br/><b>Isi:</b><br/>“BPS menegaskan data UMKM dilindungi UU No. 16 Tahun 1997. Data tidak dipakai untuk pajak, audit, maupun penegakan hukum — hanya statistik agregat. Masyarakat diimbau Tiga TIR: Terima petugas, Isi benar, Rahasia terjaga. Verifikasi petugas resmi lewat WA Official UMKM.”<br/><br/>Terkait isu: <i>${issue.title}</i><br/><br/>Simulasi siap — kirim ke Tim Humas / WA Desk untuk approval?`,
+      html: `<b>Draft jawaban/klarifikasi (siap edit)</b><br/><br/><b>Judul:</b> Klarifikasi Hoaks KUR: Data Tidak Dipakai Tarik Cicilan Ganda<br/><br/><b>Isi:</b><br/>“Kementerian UMKM menegaskan klaim data KUR dipakai menarik cicilan ganda adalah hoaks. Debitur hanya dilayani melalui kanal resmi perbankan himbara / Sapa UMKM. Waspadai tautan phishing dan petugas palsu. Laporkan via WA Official UMKM.”<br/><br/>Terkait isu: <i>${issue.title}</i><br/><br/>Simulasi siap — kirim ke Tim Humas / WA Desk untuk approval?`,
       actions: [
         { id: 'open-wa', label: 'Kirim via WhatsApp', kind: 'open-wa' },
         { id: 'assign-wa', label: 'Assign ke WA Desk', kind: 'assign-wa' },
       ],
     },
     {
-      keys: ['hoaks', 'pajak', 'analisis', 'analisa', 'isu'],
-      html: `<b>Analisis isu — ${issue.id}</b><br/><br/>${issue.description}<br/><br/><b>Kerentanan narasi:</b> Hoaks menempel pada kekhawatiran riil pajak UMKM — bantahan generik kurang efektif.<br/><br/><b>Yang terbukti lebih kuat (simulasi):</b> testimoni pelaku usaha + dasar hukum UU 16/1997 + verifikasi petugas via bot WA.<br/><br/><b>Next best action:</b> assign blast klarifikasi ke WA Official sebelum SLA habis.`,
+      keys: ['hoaks', 'kur', 'analisis', 'analisa', 'isu', 'cicilan'],
+      html: `<b>Analisis isu — ${issue.id}</b><br/><br/>${issue.description}<br/><br/><b>Kerentanan narasi:</b> Hoaks menempel pada kekhawatiran cicilan KUR — bantahan generik kurang efektif.<br/><br/><b>Yang terbukti lebih kuat (simulasi):</b> klarifikasi resmi + kutipan media + kontra-narasi Digital Army + verifikasi via WA bot.<br/><br/><b>Next best action:</b> assign blast klarifikasi ke WA Official sebelum SLA habis.`,
       actions: [{ id: 'assign-wa', label: 'Assign ke WhatsApp', kind: 'assign-wa' }],
     },
     {
-      keys: ['briefing', '1 halaman', 'halaman'],
+      keys: ['briefing', '1 halaman', 'halaman', 'mingguan', 'program'],
       html: `<b>Briefing 1 halaman — ${issue.id}</b><br/><br/>Disusun (simulasi): ringkasan situasi, kronologi singkat, peta sebaran, matriks respons L1–L3, dan 2 opsi keputusan dengan trade-off.<br/><br/><b>Isu:</b> ${issue.title}<br/><b>SLA tersisa:</b> ~${sla}<br/><br/>Siap diekspor PDF / dikirim ke pimpinan via WhatsApp.`,
       actions: [{ id: 'open-wa', label: 'Bagikan via WhatsApp', kind: 'open-wa' }],
     },
@@ -102,7 +102,7 @@ const CHIPS = [
 ];
 
 const WELCOME =
-  'Halo — saya <b>SE Copilot</b> (simulasi). Saya bisa bantu ringkasan isu, <b>assign ke WhatsApp Official</b>, rekomendasi respons, atau draft klarifikasi. Ketuk ikon WA untuk chat desk terkait.';
+  'Halo — saya <b>Engagement Copilot</b> (simulasi). Saya bisa bantu ringkasan isu, <b>assign ke WhatsApp Official</b>, rekomendasi respons, atau draft klarifikasi. Ketuk ikon WA untuk chat desk terkait.';
 
 function aiReply(q: string, issue: EscalationIssue): Pick<Msg, 'html' | 'actions'> {
   const lq = q.toLowerCase();
@@ -177,7 +177,7 @@ export function UMKMAIChat({
       openWhatsApp(
         escalation,
         action.label.toLowerCase().includes('kirim') || action.label.toLowerCase().includes('bagikan')
-          ? 'Mohon review draft klarifikasi dari SE Copilot.'
+          ? 'Mohon review draft klarifikasi dari Engagement Copilot.'
           : undefined,
       );
       return;
@@ -216,12 +216,12 @@ export function UMKMAIChat({
         {open && (
           <motion.div
             role="dialog"
-            aria-label="SE Copilot"
+            aria-label="Engagement Copilot"
             initial={{ opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.96 }}
             transition={{ duration: 0.22 }}
-            className="se-ai-panel fixed z-[90] flex flex-col overflow-hidden rounded-2xl border bg-white"
+            className="se-ai-panel fixed z-[90] flex flex-col overflow-hidden rounded-2xl border"
             style={{
               right: 22,
               bottom: 96,
@@ -229,28 +229,29 @@ export function UMKMAIChat({
               maxWidth: 'calc(100vw - 32px)',
               height: 480,
               maxHeight: 'calc(100vh - 140px)',
-              borderColor: 'var(--line-2)',
-              boxShadow: '0 24px 60px -18px rgba(80,50,10,0.35)',
+              background: 'linear-gradient(180deg, #f4f8fc 0%, #e8f0f7 100%)',
+              borderColor: '#bfd2e3',
+              boxShadow: '0 24px 60px -18px rgba(31, 59, 87, 0.35)',
             }}
           >
             <div
               className="flex items-center gap-2.5 px-3.5 py-3 border-b shrink-0"
               style={{
-                background: 'linear-gradient(135deg,#FFF3E4,#FFFDFB)',
-                borderColor: 'var(--line)',
+                background: 'linear-gradient(135deg, #eef4fa, #dce6f1)',
+                borderColor: '#bfd2e3',
               }}
             >
               <div
                 className="w-8 h-8 rounded-[10px] flex items-center justify-center text-white shrink-0"
-                style={{ background: 'linear-gradient(135deg, var(--orange), var(--orange-deep))' }}
+                style={{ background: 'linear-gradient(135deg, #1f3b57, #0b192c)' }}
               >
                 <Sparkles className="w-4 h-4" />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-[0.84rem] font-bold" style={{ color: 'var(--ink)' }}>
-                  SE Copilot
+                <div className="text-[0.84rem] font-bold" style={{ color: '#152943' }}>
+                  Engagement Copilot
                 </div>
-                <div className="text-[0.62rem] font-semibold" style={{ color: 'var(--ink-3)' }}>
+                <div className="text-[0.62rem] font-semibold" style={{ color: '#5f6b76' }}>
                   Simulasi · eskalasi · WhatsApp desk
                 </div>
               </div>
@@ -269,7 +270,7 @@ export function UMKMAIChat({
                 aria-label="Tutup"
                 onClick={() => setOpen(false)}
                 className="p-1 rounded-md"
-                style={{ color: 'var(--ink-3)' }}
+                style={{ color: '#5f6b76' }}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -291,7 +292,7 @@ export function UMKMAIChat({
             <div
               ref={bodyRef}
               className="flex-1 overflow-y-auto p-3 flex flex-col gap-2.5 min-h-0"
-              style={{ background: 'linear-gradient(180deg,#FFFDFB,#FFF9F2)' }}
+              style={{ background: 'linear-gradient(180deg, #f7fafc 0%, #eef4fa 55%, #e7eef6 100%)' }}
             >
               {msgs.map((m) => (
                 <div
@@ -305,13 +306,13 @@ export function UMKMAIChat({
                     className={cn(
                       'px-3 py-2 rounded-xl text-[0.75rem] leading-snug',
                       m.role === 'ai'
-                        ? 'bg-white border rounded-bl-sm'
+                        ? 'bg-white/95 border rounded-bl-sm'
                         : 'text-white rounded-br-sm',
                     )}
                     style={
                       m.role === 'ai'
-                        ? { borderColor: 'var(--line)', color: 'var(--ink)' }
-                        : { background: 'var(--ink)' }
+                        ? { borderColor: '#bfd2e3', color: '#152943' }
+                        : { background: 'linear-gradient(135deg, #1f3b57, #0b192c)' }
                     }
                     dangerouslySetInnerHTML={{ __html: m.html }}
                   />
@@ -326,7 +327,7 @@ export function UMKMAIChat({
                           style={
                             a.kind === 'open-wa'
                               ? { borderColor: '#86EFAC', color: '#15803D', background: '#F0FDF4' }
-                              : { borderColor: 'var(--line-2)', color: 'var(--ink-2)' }
+                              : { borderColor: '#bfd2e3', color: '#1f3b57', background: '#f4f8fc' }
                           }
                         >
                           {a.kind === 'open-wa' ? (
@@ -343,8 +344,8 @@ export function UMKMAIChat({
               ))}
               {typing && (
                 <div
-                  className="self-start bg-white border px-3 py-2.5 rounded-xl rounded-bl-sm"
-                  style={{ borderColor: 'var(--line)' }}
+                  className="self-start bg-white/95 border px-3 py-2.5 rounded-xl rounded-bl-sm"
+                  style={{ borderColor: '#bfd2e3' }}
                 >
                   <span className="se-ai-typing">
                     <i /><i /><i />
@@ -355,21 +356,21 @@ export function UMKMAIChat({
 
             <div
               className="flex gap-1.5 flex-wrap px-3 pb-2 shrink-0"
-              style={{ background: '#FFF9F2' }}
+              style={{ background: '#e8f0f7' }}
             >
               {CHIPS.map((c) => (
                 <button
                   key={c.q}
                   type="button"
                   onClick={() => ask(c.q)}
-                  className="text-[0.64rem] font-bold px-2.5 py-1.5 rounded-full border bg-white"
+                  className="text-[0.64rem] font-bold px-2.5 py-1.5 rounded-full border bg-white/90"
                   style={{
                     borderColor: c.q.toLowerCase().includes('whatsapp')
                       ? '#86EFAC'
-                      : 'var(--line-2)',
+                      : '#bfd2e3',
                     color: c.q.toLowerCase().includes('whatsapp')
                       ? '#15803D'
-                      : 'var(--ink-2)',
+                      : '#1f3b57',
                   }}
                 >
                   {c.label}
@@ -378,8 +379,8 @@ export function UMKMAIChat({
             </div>
 
             <div
-              className="flex gap-2 px-3 py-2.5 border-t shrink-0 bg-white"
-              style={{ borderColor: 'var(--line)' }}
+              className="flex gap-2 px-3 py-2.5 border-t shrink-0"
+              style={{ borderColor: '#bfd2e3', background: '#eef4fa' }}
             >
               <button
                 type="button"
@@ -399,14 +400,14 @@ export function UMKMAIChat({
                   if (e.key === 'Enter') ask(input);
                 }}
                 placeholder="Assign WA / tanya isu…"
-                className="flex-1 rounded-[10px] border px-3 py-2 text-[0.76rem] outline-none"
-                style={{ borderColor: 'var(--line-2)', color: 'var(--ink)' }}
+                className="flex-1 rounded-[10px] border px-3 py-2 text-[0.76rem] outline-none bg-white"
+                style={{ borderColor: '#bfd2e3', color: '#152943' }}
               />
               <button
                 type="button"
                 onClick={() => ask(input)}
                 className="rounded-[10px] px-3.5 font-bold text-[0.74rem] text-white flex items-center gap-1.5"
-                style={{ background: 'var(--ink)' }}
+                style={{ background: 'linear-gradient(135deg, #1f3b57, #0b192c)' }}
               >
                 <Send className="w-3.5 h-3.5" />
                 Kirim
@@ -418,14 +419,14 @@ export function UMKMAIChat({
 
       <button
         type="button"
-        aria-label={open ? 'Tutup SE Copilot' : 'Buka SE Copilot'}
+        aria-label={open ? 'Tutup Engagement Copilot' : 'Buka Engagement Copilot'}
         onClick={() => setOpen((v) => !v)}
         className="se-ai-fab fixed z-[90] w-14 h-14 rounded-full border-0 text-white flex items-center justify-center cursor-pointer"
         style={{
           right: 22,
           bottom: 56,
-          background: 'linear-gradient(135deg, var(--orange), var(--orange-deep))',
-          boxShadow: '0 10px 28px -6px rgba(224,106,10,0.55)',
+          background: 'linear-gradient(135deg, #1f3b57, #0b192c)',
+          boxShadow: '0 10px 28px -6px rgba(31, 59, 87, 0.55)',
         }}
       >
         {open ? <X className="w-6 h-6" /> : <Sparkles className="w-6 h-6" />}

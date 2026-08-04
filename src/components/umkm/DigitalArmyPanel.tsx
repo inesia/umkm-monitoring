@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useMemo, useState } from 'react';
-import type { DigitalArmyTask, UMKMDashboardData } from '@/types/umkm';
+import type { DigitalArmyTask } from '@/types/umkm';
 import { UMKMCard, SEPill } from './UMKMCard';
 import { cn } from '@/lib/utils';
 
@@ -151,7 +151,15 @@ function ActionTile({
   );
 }
 
-export function DigitalArmyPanel({ data }: { data: UMKMDashboardData['digitalArmy'] }) {
+export function DigitalArmyPanel({
+  data,
+}: {
+  data: {
+    active: number;
+    stats: { value: string; label: string }[];
+    tasks: DigitalArmyTask[];
+  };
+}) {
   const reducedMotion = usePrefersReducedMotion();
   const tiles = data.tasks.slice(0, 6);
 

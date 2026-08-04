@@ -4,8 +4,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sf);
-  --font-mono: var(--font-mono);
+  --font-sans: var(--font-ubuntu);
+  --font-heading: var(--font-koho);
+  --font-mono: var(--font-ubuntu);
+  --font-koho: var(--font-koho);
+  --font-ubuntu: var(--font-ubuntu);
 
   --radius-sm: 2px;
   --radius-md: 4px;
@@ -49,10 +52,9 @@
   --danantara-black: 31 59 87; /* Map to ink RGB */
   --danantara-red: 225 29 72; /* Rose 600 */
 
-  --font-sf:
-    var(--font-instrument), "Instrument Sans", "Segoe UI Variable", "Segoe UI",
-    system-ui, sans-serif;
-  --font-mono: "Instrument Sans", ui-monospace, monospace;
+  /* Typography — Ubuntu body, KoHo headings (next/font CSS vars) */
+  --font-sf: var(--font-ubuntu);
+  --font-mono: var(--font-ubuntu);
 
   /* Dashboard typography (base) */
   --dash-hero: 1.25rem;
@@ -121,7 +123,7 @@
 
   body {
     color: var(--ink);
-    font-family: var(--font-sf);
+    font-family: var(--font-ubuntu);
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
     background:
@@ -129,18 +131,33 @@
       linear-gradient(180deg, #d7e6f4 0%, #ebf1f7 460px);
   }
 
-  /* Consistent focus for buttons/links - Danantara red ring */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-heading,
+  .font-koho {
+    font-family: var(--font-koho), sans-serif;
+  }
+
+  .font-ubuntu {
+    font-family: var(--font-ubuntu), sans-serif;
+  }
+
+  /* Consistent focus for buttons/links */
   button:focus-visible,
   a:focus-visible,
   [role="button"]:focus-visible {
-    outline: 2px solid rgb(var(--danantara-red));
+    outline: 2px solid var(--orange);
     outline-offset: 2px;
   }
 
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid rgb(var(--danantara-red));
+    outline: 2px solid var(--orange);
     outline-offset: 0;
     box-shadow: 0 0 0 3px rgba(175, 38, 29, 0.15);
   }
@@ -402,22 +419,29 @@
   height: 100dvh;
   width: 100vw;
   overflow: hidden;
+  position: relative;
   display: flex;
-  align-items: stretch;
-  justify-content: stretch;
+  align-items: center;
+  justify-content: center;
   background:
     radial-gradient(1100px 460px at 85% -10%, #d7e6f4 0%, rgba(215, 230, 244, 0) 60%),
     linear-gradient(180deg, #d7e6f4 0%, #ebf1f7 70%);
   color: var(--ink);
 }
 
+/* Fixed 1920×1080 canvas — scale applied inline from TVDashboard */
 .umkm-tv-viewport {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1920px;
+  height: 1080px;
+  flex-shrink: 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  will-change: transform;
   background:
     radial-gradient(1100px 460px at 85% -10%, #d7e6f4 0%, rgba(215, 230, 244, 0) 60%),
     linear-gradient(180deg, #d7e6f4 0%, #ebf1f7 70%);
@@ -440,92 +464,160 @@
   min-height: 22px;
 }
 
+@keyframes umkm-footer-head-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    box-shadow: 0 0 0 0 rgba(74, 144, 200, 0);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 10px 2px rgba(74, 144, 200, 0.55);
+  }
+}
+
+.umkm-footer-progress-head {
+  animation: umkm-footer-head-pulse 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .umkm-footer-progress-head {
+    animation: none;
+    opacity: 0.9;
+  }
+}
+
 .umkm-tv-main {
   flex: 1 1 0;
   min-height: 0;
   min-width: 0;
   width: 100%;
-  padding: 10px 14px 8px;
+  padding: 8px 10px 6px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* Ringkasan — KPI + 3-col mid + map left / 2×2 panels right */
-.umkm-ringkasan {
+/* Menteri — 10-foot TV Bento Grid (locked rows on 1920×1080 canvas) */
+.umkm-menteri {
   display: grid;
   width: 100%;
   height: 100%;
   min-height: 0;
   min-width: 0;
-  gap: 8px;
+  overflow: hidden;
+  gap: 10px;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows:
-    auto
-    minmax(180px, 1.2fr)
-    minmax(140px, 1fr)
-    minmax(140px, 1fr);
+  grid-template-rows: 108px minmax(0, 1.25fr) minmax(0, 1fr);
   grid-template-areas:
-    "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
-    "timeline timeline timeline timeline senti senti senti senti esc esc esc esc"
-    "map map map map map map army army army take take take"
-    "map map map map map map wa wa wa kw kw kw";
+    "ribbon ribbon ribbon ribbon ribbon ribbon ribbon ribbon ribbon ribbon ribbon ribbon"
+    "listen listen listen listen listen senti senti senti agenda agenda agenda agenda"
+    "map map map map map map map map feed feed feed feed";
 }
 
-.umkm-ringkasan .area-kpi { grid-area: kpi; }
-.umkm-ringkasan .area-timeline { grid-area: timeline; min-height: 0; height: 100%; }
-.umkm-ringkasan .area-senti { grid-area: senti; min-height: 0; height: 100%; }
-.umkm-ringkasan .area-esc { grid-area: esc; min-height: 0; height: 100%; }
-.umkm-ringkasan .area-map { grid-area: map; min-height: 0; height: 100%; }
-.umkm-ringkasan .area-army { grid-area: army; min-height: 0; height: 100%; }
-.umkm-ringkasan .area-take { grid-area: take; min-height: 0; height: 100%; }
-.umkm-ringkasan .area-wa { grid-area: wa; min-height: 0; height: 100%; }
-.umkm-ringkasan .area-kw { grid-area: kw; min-height: 0; height: 100%; }
-
-/* Indonesia issue map — land fill/stroke for SVG group */
-.map-stage svg {
-  width: 100%;
+.umkm-menteri .area-ribbon,
+.umkm-menteri .area-listen,
+.umkm-menteri .area-senti,
+.umkm-menteri .area-agenda,
+.umkm-menteri .area-feed,
+.umkm-menteri .area-map {
+  min-height: 0;
+  min-width: 0;
   height: 100%;
-  display: block;
+  overflow: hidden;
+  position: relative;
 }
+
+.umkm-menteri .area-ribbon { grid-area: ribbon; }
+.umkm-menteri .area-listen { grid-area: listen; }
+.umkm-menteri .area-senti { grid-area: senti; }
+.umkm-menteri .area-agenda { grid-area: agenda; }
+.umkm-menteri .area-feed { grid-area: feed; }
+.umkm-menteri .area-map { grid-area: map; }
+
+.umkm-menteri .area-ribbon > *,
+.umkm-menteri .area-listen > *,
+.umkm-menteri .area-senti > *,
+.umkm-menteri .area-agenda > *,
+.umkm-menteri .area-feed > *,
+.umkm-menteri .area-map > * {
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.menteri-bento,
+.menteri-ribbon {
+  min-height: 0;
+  min-width: 0;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.menteri-ribbon {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  align-items: stretch;
+}
+
+.menteri-ribbon > div {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-color: var(--line) !important;
+}
+
+/* National Issue Map — light SVG land + sentiment bubbles */
+.map-card {
+  background: transparent;
+  min-height: 0;
+}
+
+.map-stage {
+  position: relative;
+  background: linear-gradient(180deg, #f4f8fc 0%, #e8f0f7 100%);
+  overflow: hidden;
+}
+
+.map-ocean {
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 52%, rgba(125, 180, 220, 0.16), transparent 68%),
+    linear-gradient(180deg, #f7fafc 0%, #e7eef6 100%);
+}
+
+.map-svg {
+  padding: 0 4px;
+  overflow: visible;
+}
+
 .map-stage .indo-land {
-  fill: #fbe3c8;
-  stroke: #efc79a;
+  fill: #c5d9ec;
+  stroke: #7fa3c2;
   stroke-width: 4;
 }
+
 .bubble {
-  stroke: #fff;
-  stroke-width: 1.6;
   cursor: pointer;
-  transition: opacity 0.15s, r 0.35s ease;
+  transition: r 0.25s ease, opacity 0.15s ease;
 }
-.bubble:hover,
+
 .bubble-active {
   opacity: 1;
-  stroke-width: 2.2;
-  filter: drop-shadow(0 0 6px rgba(245, 130, 32, 0.45));
 }
+
 .bubble-pulse-ring {
-  fill: none;
-  stroke-width: 1.2;
-  opacity: 0;
   pointer-events: none;
   transform-box: fill-box;
   transform-origin: center;
-  animation: map-bubble-pulse 2.8s ease-out infinite;
+  animation: map-bubble-pulse 2.6s ease-out infinite;
 }
-.bubble-pulse-ring.b-neg {
-  stroke: rgba(199, 64, 45, 0.55);
-}
-.bubble-pulse-ring.b-pos {
-  stroke: rgba(30, 142, 90, 0.5);
-}
-.bubble-pulse-ring.b-neu {
-  stroke: rgba(247, 166, 43, 0.55);
-}
+
 .map-bubble-group.is-active .bubble-pulse-ring {
-  animation-duration: 1.8s;
+  animation-duration: 1.7s;
 }
+
 @keyframes map-bubble-pulse {
   0% {
     opacity: 0.55;
@@ -533,41 +625,185 @@
   }
   70% {
     opacity: 0;
-    transform: scale(2.1);
+    transform: scale(2.05);
   }
   100% {
     opacity: 0;
-    transform: scale(2.1);
+    transform: scale(2.05);
   }
 }
-.b-neg {
-  fill: rgba(199, 64, 45, 0.78);
-}
-.b-pos {
-  fill: rgba(30, 142, 90, 0.75);
-}
-.b-neu {
-  fill: rgba(247, 166, 43, 0.8);
-}
+
 .map-auto-callout-anchor {
   position: absolute;
-  z-index: 4;
-  width: min(190px, 52%);
+  z-index: 8;
+  width: min(210px, 56%);
+  max-width: calc(100% - 16px);
   pointer-events: none;
 }
+
+/* Vertical — bubble bawah → callout di atas; bubble atas → callout di bawah */
+.map-auto-callout-anchor.is-center.is-above {
+  transform: translate(-50%, calc(-100% - 12px));
+}
+
+.map-auto-callout-anchor.is-center.is-below {
+  transform: translate(-50%, 12px);
+}
+
+/* Horizontal — bubble kiri → callout di kanan; bubble kanan → callout di kiri */
+.map-auto-callout-anchor.is-right.is-above {
+  transform: translate(14px, calc(-100% - 12px));
+}
+
+.map-auto-callout-anchor.is-right.is-below {
+  transform: translate(14px, 12px);
+}
+
+.map-auto-callout-anchor.is-left.is-above {
+  transform: translate(calc(-100% - 14px), calc(-100% - 12px));
+}
+
+.map-auto-callout-anchor.is-left.is-below {
+  transform: translate(calc(-100% - 14px), 12px);
+}
+
 .map-auto-callout {
-  background: rgba(255, 252, 247, 0.96);
-  border: 1px solid var(--line-2);
-  border-radius: 10px;
-  box-shadow: 0 12px 28px -12px rgba(80, 50, 10, 0.35);
-  padding: 9px 11px;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(191, 210, 227, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px -10px rgba(31, 59, 87, 0.28);
+  padding: 10px 12px;
   backdrop-filter: blur(6px);
 }
+
 .map-auto-callout b {
-  font-size: 0.76rem;
+  font-family: var(--font-koho), sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #152943;
+  line-height: 1.2;
   display: block;
-  line-height: 1.25;
 }
+
+.map-tone-pill {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+
+.map-callout-meta {
+  margin-top: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1f3b57;
+  font-variant-numeric: tabular-nums;
+}
+
+.map-callout-issue {
+  margin-top: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #5f6b76;
+  line-height: 1.35;
+}
+
+.map-tip-src {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  margin-top: 7px;
+}
+
+.map-tip-src small {
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.map-tip-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 99px;
+  overflow: hidden;
+  background: #e8eef4;
+}
+
+.map-tip-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+}
+
+/* Compact sentiment legend — overlay, no ranking chips */
+.map-legend-overlay {
+  position: absolute;
+  z-index: 12;
+  left: 10px;
+  bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(191, 210, 227, 0.85);
+  box-shadow: 0 4px 14px -6px rgba(31, 59, 87, 0.22);
+  font-size: 10px;
+  font-weight: 700;
+  color: #5f6b76;
+  pointer-events: none;
+}
+
+.map-legend-overlay span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.map-legend-overlay i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble-pulse-ring {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Legacy alias */
+.umkm-ringkasan { display: contents; }
+/* Map Legend and List Styles (shared) */
+.map-legend {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-body);
+}
+.map-legend .dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+.map-list .row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-body);
+  padding: 2px 0;
+  border-bottom: 1px solid var(--line);
+}
+
 .map-tip {
   position: fixed;
   z-index: 100;
@@ -587,44 +823,18 @@
   display: block;
   margin-bottom: 2px;
 }
-.map-tip-src {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  margin-top: 5px;
-}
-.map-tip-bar {
-  flex: 1;
-  height: 5px;
-  border-radius: 99px;
-  display: flex;
-  overflow: hidden;
-  background: var(--cream-2);
-}
-.map-tip-bar i {
-  height: 100%;
-}
-@media (prefers-reduced-motion: reduce) {
-  .bubble-pulse-ring {
-    animation: none;
-    opacity: 0;
-  }
-  .map-parallax {
-    transform: none !important;
-  }
-}
 
-/* SE Copilot (simulasi) */
+/* SE Copilot (simulasi) — ice-blue palette aligned with Sebaran Isu Nasional */
 .se-ai-panel .msg-ai b,
 .se-ai-panel b {
-  color: var(--orange-deep);
+  color: #152943;
 }
 .se-ai-typing i {
   display: inline-block;
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--ink-3);
+  background: #7fa3c2;
   margin-right: 3px;
   animation: se-ai-tp 1s infinite;
 }
@@ -1012,81 +1222,104 @@
   }
 }
 
-/* Krisis — single-screen */
+/* Krisis — 10-foot TV Bento Grid */
 .umkm-krisis {
   display: grid;
+  width: 100%;
   height: 100%;
   min-height: 0;
-  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+  gap: 10px;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows:
-    auto
-    minmax(0, 1.5fr)
-    minmax(0, 1fr);
+  grid-template-rows: 108px minmax(0, 1.25fr) minmax(0, 1fr);
   grid-template-areas:
     "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
     "board board board board board board board board esc esc esc esc"
-    "tl tl tl tl take take take take take mx mx mx";
+    "tl tl tl tl take take take take mx mx mx mx";
+}
+
+.umkm-krisis .area-kpi,
+.umkm-krisis .area-board,
+.umkm-krisis .area-esc,
+.umkm-krisis .area-tl,
+.umkm-krisis .area-take,
+.umkm-krisis .area-mx {
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
 }
 
 .umkm-krisis .area-kpi { grid-area: kpi; }
-.umkm-krisis .area-board { grid-area: board; min-height: 0; }
-.umkm-krisis .area-esc { grid-area: esc; min-height: 0; }
-.umkm-krisis .area-tl { grid-area: tl; min-height: 0; }
-.umkm-krisis .area-take { grid-area: take; min-height: 0; }
-.umkm-krisis .area-mx { grid-area: mx; min-height: 0; }
+.umkm-krisis .area-board { grid-area: board; }
+.umkm-krisis .area-esc { grid-area: esc; }
+.umkm-krisis .area-tl { grid-area: tl; }
+.umkm-krisis .area-take { grid-area: take; }
+.umkm-krisis .area-mx { grid-area: mx; }
 
-/* Edukasi — dense layout matching reference (KPI / funnel+intent+growth / cal+ch) */
-.umkm-edukasi {
+.umkm-krisis .area-kpi > *,
+.umkm-krisis .area-board > *,
+.umkm-krisis .area-esc > *,
+.umkm-krisis .area-tl > *,
+.umkm-krisis .area-take > *,
+.umkm-krisis .area-mx > * {
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Program — KPI / board+senti / constraints+regions+milestones */
+.umkm-program {
   display: grid;
+  width: 100%;
   height: 100%;
   min-height: 0;
-  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  gap: 10px;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows:
-    auto
-    minmax(0, 1.2fr)
-    minmax(0, 1fr);
+  grid-template-rows: 108px minmax(0, 1.25fr) minmax(0, 1fr);
   grid-template-areas:
     "kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi kpi"
-    "funnel funnel funnel funnel intent intent intent intent growth growth growth growth"
-    "cal cal cal cal cal cal cal cal ch ch ch ch";
+    "board board board board board board board board senti senti senti senti"
+    "constraints constraints constraints constraints regions regions regions regions milestones milestones milestones milestones";
 }
 
-.umkm-edukasi .area-kpi { grid-area: kpi; }
-.umkm-edukasi .area-funnel { grid-area: funnel; min-height: 0; height: 100%; }
-.umkm-edukasi .area-intent { grid-area: intent; min-height: 0; height: 100%; }
-.umkm-edukasi .area-growth { grid-area: growth; min-height: 0; height: 100%; }
-.umkm-edukasi .area-cal { grid-area: cal; min-height: 0; height: 100%; }
-.umkm-edukasi .area-ch { grid-area: ch; min-height: 0; height: 100%; }
+.umkm-program .area-kpi,
+.umkm-program .area-board,
+.umkm-program .area-senti,
+.umkm-program .area-constraints,
+.umkm-program .area-regions,
+.umkm-program .area-milestones {
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
 
-.umkm-edukasi .area-kpi > div {
-  gap: 6px;
-}
-.umkm-edukasi .area-kpi > div > div {
-  padding: 0.45rem 0.6rem;
-  border-radius: 10px;
-}
-.umkm-edukasi .area-kpi > div > div > div:nth-child(3) {
-  font-size: 1.1rem;
-}
-.umkm-edukasi .area-kpi > div > div > div:nth-child(4) {
-  font-size: 0.55rem;
-  margin-top: 0.2rem;
-}
-.umkm-edukasi .edu-card-tight {
-  padding: 0.55rem 0.7rem;
-}
-.umkm-edukasi .edu-card-tight > div:first-of-type {
-  margin-bottom: 0.35rem;
-}
-.umkm-edukasi .edu-card-tight > div:first-of-type > div > div:first-child {
-  font-size: 0.6rem;
-  letter-spacing: 0.1em;
-}
-.umkm-edukasi .edu-card-tight > div:first-of-type > div > div:last-child {
-  font-size: 0.55rem;
-  margin-top: 0;
+.umkm-program .area-kpi { grid-area: kpi; }
+.umkm-program .area-board { grid-area: board; }
+.umkm-program .area-senti { grid-area: senti; }
+.umkm-program .area-constraints { grid-area: constraints; }
+.umkm-program .area-regions { grid-area: regions; }
+.umkm-program .area-milestones { grid-area: milestones; }
+
+.umkm-program .area-kpi > *,
+.umkm-program .area-board > *,
+.umkm-program .area-senti > *,
+.umkm-program .area-constraints > *,
+.umkm-program .area-regions > *,
+.umkm-program .area-milestones > * {
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* Compact TV density under 900px height (laptop / short screens) */
@@ -1094,9 +1327,8 @@
   .umkm-tv-main {
     padding: 6px 10px 4px;
   }
-  .umkm-ringkasan,
   .umkm-krisis,
-  .umkm-edukasi {
+  .umkm-program {
     gap: 6px;
   }
 }

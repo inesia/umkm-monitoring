@@ -5,14 +5,15 @@ type PageProps = {
   searchParams?: Promise<{ kiosk?: string; rotate?: string; view?: string }>;
 };
 
+const VALID_VIEWS: UMKMView[] = ['menteri', 'program', 'krisis'];
+
 export default async function Home({ searchParams }: PageProps) {
   const params = (await searchParams) ?? {};
   const kiosk = params.kiosk !== '0';
   const autoRotate = params.rotate !== '0';
+  const raw = params.view === 'ringkasan' ? 'menteri' : params.view;
   const initialView: UMKMView =
-    params.view === 'krisis' || params.view === 'program' || params.view === 'ringkasan'
-      ? params.view
-      : 'ringkasan';
+    raw && VALID_VIEWS.includes(raw as UMKMView) ? (raw as UMKMView) : 'menteri';
 
   return (
     <TVDashboard

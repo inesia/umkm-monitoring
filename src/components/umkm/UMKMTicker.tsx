@@ -3,10 +3,13 @@
 import { motion } from 'framer-motion';
 import type { TickerItem } from '@/types/umkm';
 
-const TAG_STYLE = {
-  hoax: { bg: '#FDEAE7', color: 'var(--neg)' },
-  edu: { bg: '#E8F6EE', color: 'var(--pos)' },
-  media: { bg: 'var(--cream-2)', color: 'var(--orange-deep)' },
+/** Tag chips on dark navy — high contrast */
+const TAG_STYLE: Record<TickerItem['tag'], { bg: string; color: string }> = {
+  hoax: { bg: 'rgba(239, 68, 68, 0.22)', color: '#FCA5A5' },
+  edu: { bg: 'rgba(16, 185, 129, 0.22)', color: '#6EE7B7' },
+  media: { bg: 'rgba(191, 210, 227, 0.18)', color: '#D7E6F4' },
+  isu: { bg: 'rgba(245, 158, 11, 0.22)', color: '#FCD34D' },
+  program: { bg: 'rgba(56, 189, 248, 0.2)', color: '#7DD3FC' },
 };
 
 export function UMKMTicker({
@@ -22,17 +25,17 @@ export function UMKMTicker({
     <div
       className="umkm-news-ticker h-9 shrink-0 overflow-hidden flex items-center border-t"
       style={{
-        background: 'linear-gradient(90deg, #E6F4EA 0%, #F0FDF4 40%, #E6F4EA 100%)',
-        borderColor: 'var(--line)',
+        background: 'var(--orange-deep)',
+        borderColor: 'rgba(191, 210, 227, 0.22)',
       }}
       aria-label="News ticker"
     >
       <div
         className="shrink-0 h-full px-3 flex items-center text-[0.58rem] font-bold uppercase tracking-[0.14em] border-r z-10"
         style={{
-          background: 'rgba(255,249,242,0.96)',
-          borderColor: 'var(--line)',
-          color: 'var(--orange-deep)',
+          background: 'var(--ink)',
+          borderColor: 'rgba(191, 210, 227, 0.28)',
+          color: '#EBF1F7',
         }}
       >
         {label}
@@ -48,8 +51,8 @@ export function UMKMTicker({
             return (
               <span
                 key={`${item.tag}-${i}`}
-                className="inline-flex items-center text-[0.74rem]"
-                style={{ color: 'var(--ink)' }}
+                className="inline-flex items-center text-[0.74rem] font-medium"
+                style={{ color: '#F2F5F5' }}
               >
                 <span
                   className="text-[0.58rem] font-bold uppercase tracking-[0.06em] px-2 py-0.5 rounded mx-6"

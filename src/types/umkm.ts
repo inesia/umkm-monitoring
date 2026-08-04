@@ -1,8 +1,9 @@
-export type UMKMView = 'ringkasan' | 'krisis' | 'program';
+export type UMKMView = 'menteri' | 'program' | 'krisis';
 
 export type SentimentTone = 'pos' | 'neu' | 'neg';
 export type Severity = 'high' | 'medium' | 'low';
 export type StatusTone = 'done' | 'proc' | 'rep' | 'rev';
+export type ProgramStatus = 'on_track' | 'accelerate' | 'risk';
 
 export interface UMKMKPI {
   id: string;
@@ -47,6 +48,54 @@ export interface EscalationIssue {
   levels: EscalationLevel[];
 }
 
+export interface ChannelBar {
+  name: string;
+  pct: number;
+  value: string;
+  tone: 'orange' | 'green' | 'dark';
+}
+
+export interface CrisisIssue {
+  title: string;
+  detail: string;
+  source: string;
+  mentions: string;
+  sla: string;
+  pic: string;
+  status: string;
+  statusTone: StatusTone;
+  severity: Severity;
+}
+
+export interface TimelineEvent {
+  time: string;
+  text: string;
+  tone: 'crit' | 'good' | 'neutral';
+}
+
+export interface TickerItem {
+  tag: 'hoax' | 'edu' | 'media' | 'isu' | 'program';
+  tagLabel: string;
+  text: string;
+}
+
+export interface HotPost {
+  id: string;
+  handle: string;
+  platform: 'tiktok' | 'x' | 'news' | 'instagram' | 'facebook' | 'youtube' | 'threads';
+  excerpt: string;
+  likes: string;
+  retweets: string;
+  tone: StatusTone;
+  toneLabel: string;
+  verified?: boolean;
+  influencer?: boolean;
+  sourceUrl?: string;
+  thumbTone: string;
+  score?: string;
+}
+
+/** Legacy panel types (kept for unused/optional panels) */
 export interface DigitalArmyTask {
   name: string;
   meta: string;
@@ -76,31 +125,6 @@ export interface WAStat {
   label: string;
 }
 
-export interface ChannelBar {
-  name: string;
-  pct: number;
-  value: string;
-  tone: 'orange' | 'green' | 'dark';
-}
-
-export interface CrisisIssue {
-  title: string;
-  detail: string;
-  source: string;
-  mentions: string;
-  sla: string;
-  pic: string;
-  status: string;
-  statusTone: StatusTone;
-  severity: Severity;
-}
-
-export interface TimelineEvent {
-  time: string;
-  text: string;
-  tone: 'crit' | 'good' | 'neutral';
-}
-
 export interface FunnelStep {
   label: string;
   value: string;
@@ -116,51 +140,151 @@ export interface CalendarItem {
   statusTone: StatusTone;
 }
 
-export interface TickerItem {
-  tag: 'hoax' | 'edu' | 'media';
-  tagLabel: string;
+export interface MinisterProfile {
+  name: string;
+  title: string;
+  since: string;
+  cabinet: string;
+  party: string;
+  history: string;
+  birth: string;
+  photoNote: string;
+}
+
+export interface MinisterNewsItem {
+  title: string;
+  context: string;
+  source: string;
+  tone: SentimentTone;
+  toneLabel: string;
+  reach: string;
+  time: string;
+}
+
+export interface PublicQuote {
+  text: string;
+  context: string;
+  responses: string;
+  supportPct: number;
+}
+
+export interface ActivitySchedule {
+  title: string;
+  when: string;
+  where: string;
+  media: string;
+}
+
+export interface DominantTopic {
+  name: string;
+  count: string;
+}
+
+export interface SourceTotal {
+  label: string;
+  value: string;
+  kind: 'tweets' | 'posts' | 'articles';
+}
+
+export interface AuthorRank {
+  name: string;
+  site: string;
+  mentions: number;
+  engagement: number;
+  followers: string;
+  group: 'influential' | 'active' | 'portal';
+}
+
+export interface ProgramBoardItem {
+  name: string;
+  partner: string;
+  target: string;
+  realization: string;
+  pct: number;
+  trend: string;
+  trendTone: 'up' | 'down' | 'flat';
+  status: ProgramStatus;
+  statusLabel: string;
+}
+
+export interface ProgramSentiment {
+  name: string;
+  posPct: number;
+}
+
+export interface ProgramConstraint {
+  issue: string;
+  program: string;
+  level: 'monitor' | 'risk';
+}
+
+export interface RegionAchievement {
+  name: string;
+  pct: number;
+  note?: string;
+}
+
+export interface ProgramMilestone {
+  when: string;
   text: string;
 }
 
-export interface HotPost {
-  id: string;
+export interface CrisisAmplifier {
   handle: string;
-  platform: 'tiktok' | 'x' | 'news' | 'instagram' | 'facebook';
-  excerpt: string;
-  likes: string;
-  retweets: string;
-  tone: StatusTone;
-  toneLabel: string;
-  verified?: boolean;
-  influencer?: boolean;
-  sourceUrl?: string;
-  thumbTone: string;
+  note: string;
+  platform: string;
+  followers: string;
+  reach: string;
+  role: string;
+  sentiment: string;
+}
+
+export interface CrisisChannelReach {
+  channel: string;
+  reach: string;
+  posPct: number;
 }
 
 export interface UMKMDashboardData {
   kpis: UMKMKPI[];
+  programKpis: UMKMKPI[];
   crisisKpis: UMKMKPI[];
-  eduKpis: UMKMKPI[];
-  sentiment: { pos: number; neu: number; neg: number; net: number; posCount: string; neuCount: string; negCount: string };
+  sentiment: {
+    pos: number;
+    neu: number;
+    neg: number;
+    net: number;
+    posCount: string;
+    neuCount: string;
+    negCount: string;
+  };
   emotions: { name: string; value: string; color: string }[];
   channels: ChannelBar[];
   mapBubbles: MapBubble[];
   mapTop: MapBubble[];
   escalation: EscalationIssue;
-  digitalArmy: { active: number; stats: { value: string; label: string }[]; tasks: DigitalArmyTask[] };
-  takedown: { chips: { value: string; label: string; highlight?: boolean }[]; items: TakedownItem[] };
-  wa: { badge: string; stats: WAStat[]; intents: { label: string; pct: string }[] };
   keywords: { text: string; tone?: 'pos' | 'neg' }[];
   posts: HotPost[];
   crisisIssues: CrisisIssue[];
   crisisTimeline: TimelineEvent[];
-  funnel: FunnelStep[];
-  botIntents: ChannelBar[];
-  calendar: CalendarItem[];
-  eduChannels: ChannelBar[];
-  eduGrowth: { week: string; optin: number; sessions: number }[];
-  eduComplaints: { label: string; value: string; note: string }[];
-  eduBestContent: { title: string; channel: string; er: string; views: string };
+  crisisAmplifiers: CrisisAmplifier[];
+  crisisChannelReach: CrisisChannelReach[];
+  crisisHashtags: string[];
+  minister: MinisterProfile;
+  ministerNews: MinisterNewsItem[];
+  quotes: PublicQuote[];
+  schedule: ActivitySchedule[];
+  dominantTopics: DominantTopic[];
+  sourceTotals: SourceTotal[];
+  authors: AuthorRank[];
+  personalInsight: string;
+  programs: ProgramBoardItem[];
+  programSentiment: ProgramSentiment[];
+  programConstraints: ProgramConstraint[];
+  regionAchievements: RegionAchievement[];
+  milestones: ProgramMilestone[];
   ticker: TickerItem[];
   insight: string;
+  programInsight: string;
+  crisisInsight: string;
 }

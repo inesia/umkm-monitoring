@@ -15,6 +15,8 @@ const PLATFORM: Record<
   news: { label: 'NEWS', bg: '#6B7280' },
   instagram: { label: 'IG', bg: '#E1306C' },
   facebook: { label: 'FB', bg: '#1877F2' },
+  youtube: { label: 'YT', bg: '#FF0000' },
+  threads: { label: 'TH', bg: '#000000' },
 };
 
 function usePrefersReducedMotion() {

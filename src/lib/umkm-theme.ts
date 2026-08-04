@@ -21,8 +21,8 @@ export const UMKM_COLORS = {
 export const UMKM_BRAND = {
   title: 'Kementerian UMKM',
   subtitle: 'Engagement Center',
-  phase: 'Pemantauan Digital',
-  coverage: 'Nasional',
+  phase: '2026',
+  coverage: '38 Provinsi',
   logo: '/logo-kemenkopukm.svg',
   poweredBy: 'Dashboard by Ripple10',
   footer:

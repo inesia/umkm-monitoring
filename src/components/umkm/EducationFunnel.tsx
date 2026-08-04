@@ -1,4 +1,4 @@
-import type { UMKMDashboardData } from '@/types/umkm';
+import type { FunnelStep, CalendarItem, ChannelBar } from '@/types/umkm';
 import { UMKMCard, SEPill, SEStatus, ChannelBars } from './UMKMCard';
 
 export function EducationFunnel({
@@ -7,10 +7,10 @@ export function EducationFunnel({
   calendar,
   eduChannels,
 }: {
-  funnel: UMKMDashboardData['funnel'];
-  botIntents: UMKMDashboardData['botIntents'];
-  calendar: UMKMDashboardData['calendar'];
-  eduChannels: UMKMDashboardData['eduChannels'];
+  funnel: FunnelStep[];
+  botIntents: ChannelBar[];
+  calendar: CalendarItem[];
+  eduChannels: ChannelBar[];
 }) {
   return (
     <div className="grid grid-cols-12 gap-2.5 h-full min-h-0">

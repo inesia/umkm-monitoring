@@ -6,9 +6,9 @@ import type { UMKMView } from '@/types/umkm';
 import { cn } from '@/lib/utils';
 
 const VIEWS: { id: UMKMView; label: string; badge?: number }[] = [
-  { id: 'ringkasan', label: 'Ringkasan' },
+  { id: 'menteri', label: 'Menteri' },
+  { id: 'program', label: 'Kementerian & Program' },
   { id: 'krisis', label: 'Isu & Krisis', badge: 1 },
-  { id: 'program', label: 'Program UMKM' },
 ];
 
 const RANGES = ['1J', '6J', '24J', '7H'];
@@ -62,11 +62,11 @@ export function UMKMHeader({
             priority
           />
           <div>
-            <div className="text-sm font-bold leading-tight" style={{ color: 'var(--ink)' }}>
+            <div className="text-sm font-heading font-bold leading-tight" style={{ color: 'var(--ink)' }}>
               {BRAND.title}
             </div>
             <div
-              className="text-[0.62rem] font-bold uppercase tracking-[0.18em]"
+              className="font-heading text-[0.62rem] font-bold uppercase tracking-[0.18em]"
               style={{ color: 'var(--orange-deep)' }}
             >
               {BRAND.subtitle}
@@ -78,7 +78,7 @@ export function UMKMHeader({
 
         <div className="hidden lg:block shrink-0">
           <div className="text-[0.58rem] font-bold uppercase tracking-[0.16em]" style={{ color: 'var(--ink-3)' }}>
-            Fase Pendataan
+            Periode
           </div>
           <div className="text-[0.78rem] font-semibold mt-0.5" style={{ color: 'var(--ink)' }}>
             {BRAND.phase}

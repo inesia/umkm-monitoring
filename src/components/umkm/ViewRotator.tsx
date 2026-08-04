@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { UMKMView } from '@/types/umkm';
 
-export const VIEW_ORDER: UMKMView[] = ['ringkasan', 'krisis', 'program'];
+export const VIEW_ORDER: UMKMView[] = ['menteri', 'program', 'krisis'];
 
 export function nextViewOf(current: UMKMView): UMKMView {
   const idx = VIEW_ORDER.indexOf(current);
@@ -53,7 +53,7 @@ export function ViewRotator({
   }, [enabled, intervalMs, activeView, goNext, onProgressChange]);
 
   return (
-    <div className="relative flex-1 min-h-0 min-w-0 w-full flex flex-col">
+    <div className="relative flex-1 min-h-0 min-w-0 w-full flex flex-col overflow-hidden h-full">
       <AnimatePresence mode="wait">
         <motion.div
           key={activeView}
@@ -61,7 +61,7 @@ export function ViewRotator({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="flex-1 min-h-0 min-w-0 w-full h-full"
+          className="absolute inset-0 flex flex-col overflow-hidden min-h-0 min-w-0"
         >
           {children(activeView)}
         </motion.div>

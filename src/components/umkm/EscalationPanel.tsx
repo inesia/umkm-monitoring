@@ -53,7 +53,7 @@ function levelAccent(label: string) {
 
 type EscalationPanelProps = {
   data: EscalationIssue;
-  variant?: 'ringkasan' | 'krisis';
+  variant?: 'menteri' | 'krisis' | 'ringkasan';
   onOpenWarRoom?: () => void;
   onAskAI?: (prompt: string) => void;
 };
@@ -195,7 +195,7 @@ function FlipTile({
 
 export function EscalationPanel({
   data,
-  variant = 'ringkasan',
+  variant = 'menteri',
   onOpenWarRoom,
   onAskAI,
 }: EscalationPanelProps) {
@@ -227,7 +227,7 @@ export function EscalationPanel({
 
   // Ringkasan: auto-cycle one level card at a time
   useEffect(() => {
-    if (variant !== 'ringkasan' || data.levels.length < 2) return;
+    if ((variant !== 'menteri' && variant !== 'ringkasan') || data.levels.length < 2) return;
     const ms = reducedMotion ? 7000 : 4200;
     const id = window.setInterval(() => {
       if (Date.now() < pauseRotateUntil.current) return;
@@ -449,7 +449,7 @@ export function EscalationPanel({
             borderColor: 'rgba(5,150,105,0.4)',
             background: 'linear-gradient(90deg, #E6F4EA, #F0FDF4 50%, #D1FAE5)',
           }}
-          aria-label="Buka SE Copilot untuk analisis AI"
+          aria-label="Buka Engagement Copilot untuk analisis AI"
         >
           <span className="relative flex items-center gap-2 px-2.5 py-1.5">
             <span
@@ -463,7 +463,7 @@ export function EscalationPanel({
                 className="block text-[0.5rem] font-bold uppercase tracking-[0.12em]"
                 style={{ color: 'var(--orange-deep)' }}
               >
-                SE Copilot · Ketuk untuk analisis AI
+                Engagement Copilot · Ketuk untuk analisis AI
               </span>
               <span className="relative block h-[1rem] mt-0.5 overflow-hidden">
                 <AnimatePresence mode="wait">

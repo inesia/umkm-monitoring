@@ -1,6 +1,6 @@
 'use client';
 
-import type { TakedownItem, UMKMDashboardData } from '@/types/umkm';
+import type { TakedownItem } from '@/types/umkm';
 import { UMKMCard } from './UMKMCard';
 import { cn } from '@/lib/utils';
 
@@ -97,10 +97,13 @@ function TakedownRow({ item }: { item: TakedownItem }) {
 
 export function TakedownPanel({
   data,
-  variant = 'ringkasan',
+  variant = 'menteri',
 }: {
-  data: UMKMDashboardData['takedown'];
-  variant?: 'ringkasan' | 'krisis';
+  data: {
+    chips: { value: string; label: string; highlight?: boolean }[];
+    items: TakedownItem[];
+  };
+  variant?: 'menteri' | 'krisis' | 'ringkasan';
 }) {
   const items = variant === 'krisis' ? data.items.slice(0, 4) : data.items.slice(0, 2);
 

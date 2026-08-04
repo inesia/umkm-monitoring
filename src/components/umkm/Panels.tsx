@@ -1,4 +1,4 @@
-import type { UMKMDashboardData } from '@/types/umkm';
+import type { UMKMDashboardData, WAStat } from '@/types/umkm';
 import { UMKMCard, SEPill, SEStatus } from './UMKMCard';
 import { MediaListeningChart } from './MediaListeningChart';
 import { HotPostCarousel } from './HotPostCarousel';
@@ -6,7 +6,15 @@ import { HotPostCarousel } from './HotPostCarousel';
 export { DigitalArmyPanel } from './DigitalArmyPanel';
 export { TakedownPanel } from './TakedownPanel';
 
-export function WAOfficialPanel({ data }: { data: UMKMDashboardData['wa'] }) {
+export function WAOfficialPanel({
+  data,
+}: {
+  data: {
+    badge: string;
+    stats: WAStat[];
+    intents: { label: string; pct: string }[];
+  };
+}) {
   return (
     <UMKMCard title="WA Official UMKM" tone="wa" className="h-full">
       <div
