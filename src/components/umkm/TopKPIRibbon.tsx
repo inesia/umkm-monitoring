@@ -381,54 +381,71 @@ export function TopKPIRibbon({ data, kpis, sources, className = '' }: TopKPIRibb
         </div>
       </div>
 
-      {/* ---------------- COLUMN 4: POST PER SUMBER (or Isu Teratas fallback) ---------------- */}
+      {/* ---------------- COLUMN 4: POST PER SUMBER (Displays 3 Data Items at Once) ---------------- */}
       {sources && sources.length > 0 ? (
-        <div className="px-3 py-2 flex flex-col justify-between min-w-0 relative overflow-hidden bg-white">
+        <div className="px-3.5 py-2 flex flex-col justify-between min-w-0 relative overflow-hidden bg-white select-none">
           <div className="flex items-center justify-between gap-1.5 min-w-0 shrink-0">
-            <span className="text-[11px] xl:text-xs uppercase font-medium tracking-wider text-slate-500 font-heading truncate leading-none">
+            <span className="text-[11px] xl:text-xs uppercase font-bold tracking-wider text-slate-500 font-heading truncate leading-none">
               Post per Sumber
             </span>
             <span className="text-[10px] font-bold tabular-nums text-slate-400 shrink-0">
-              {srcTotal ? srcIndex + 1 : 0}/{srcTotal}
+              {srcTotal <= 3
+                ? `${srcTotal} Sumber`
+                : `${srcIndex + 1}-${((srcIndex + 2) % srcTotal) + 1}/${srcTotal}`}
             </span>
           </div>
 
-          <div className="my-0.5 min-w-0 flex-1 flex items-center gap-2.5 relative overflow-hidden">
+          <div className="my-0.5 min-w-0 flex-1 flex flex-col justify-between gap-0.5 overflow-hidden relative">
             <AnimatePresence mode="wait">
-              {currentSource && currentMeta && (
-                <motion.div
-                  key={currentSource.label}
-                  className="absolute inset-0 flex items-center gap-2.5 min-w-0"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <span
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-                    style={{ background: currentMeta.bg }}
-                  >
-                    {currentMeta.short}
-                  </span>
-                  <div className="min-w-0 overflow-hidden flex-1">
-                    <b className="block text-xl xl:text-2xl tabular-nums leading-none truncate text-slate-800">
-                      {currentSource.value}
-                    </b>
-                    <span className="block text-[10px] xl:text-[11px] font-semibold mt-0.5 truncate text-slate-500">
-                      {currentSource.label} · {currentKind}
-                    </span>
-                  </div>
-                </motion.div>
-              )}
+              <motion.div
+                key={srcIndex}
+                className="flex flex-col justify-between h-full w-full gap-0.5"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
+                {(sources.length <= 3
+                  ? sources
+                  : [
+                      sources[srcIndex % srcTotal],
+                      sources[(srcIndex + 1) % srcTotal],
+                      sources[(srcIndex + 2) % srcTotal],
+                    ]
+                ).map((src) => {
+                  const meta = sourceMeta(src.label);
+                  return (
+                    <div
+                      key={src.label}
+                      className="flex items-center justify-between gap-2 min-w-0 py-0.5 border-b border-slate-100 last:border-b-0"
+                    >
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span
+                          className="w-5 h-5 rounded flex items-center justify-center text-[9px] font-bold text-white shrink-0 shadow-2xs"
+                          style={{ background: meta.bg }}
+                        >
+                          {meta.short}
+                        </span>
+                        <span className="text-xs font-semibold text-slate-700 truncate leading-none">
+                          {src.label}
+                        </span>
+                      </div>
+                      <b className="text-xs xl:text-sm font-bold font-koho text-slate-900 tabular-nums shrink-0 leading-none">
+                        {src.value}
+                      </b>
+                    </div>
+                  );
+                })}
+              </motion.div>
             </AnimatePresence>
           </div>
 
-          <div className="h-px shrink-0 w-full bg-slate-100 overflow-hidden rounded-full">
+          <div className="h-px shrink-0 w-full bg-slate-100 overflow-hidden rounded-full mt-0.5">
             <div
               className="h-full rounded-full transition-[width] duration-100 linear"
               style={{
                 background: 'linear-gradient(90deg, #0b192c, #1f3b57)',
-                width: srcTotal <= 1 ? '100%' : `${srcProgress}%`,
+                width: srcTotal <= 3 ? '100%' : `${srcProgress}%`,
               }}
             />
           </div>
